@@ -38,6 +38,8 @@ public sealed class SpectrumView : Control
 
     private AudioBufferPipeline? _pipeline;
     private DispatcherTimer? _timer;
+    private float[] _magnitudes = Array.Empty<float>();
+    private float[] _phases = Array.Empty<float>();
     private SpectrumFrame _frame = new(Array.Empty<float>(), Array.Empty<float>(), 48000, DateTime.UtcNow);
 
     public SpectrumView()
@@ -124,11 +126,30 @@ public sealed class SpectrumView : Control
         }
 
         var result = _processor.Process(_sampleBuffer, _pipeline.SampleRate);
-        _frame = new SpectrumFrame(result.Magnitudes, result.Phases, result.SampleRate, result.TimestampUtc);
+        if (_magnitudes.Length != result.Magnitudes.Length)
+        {
+            _magnitudes = new float[result.Magnitudes.Length];
+        }
+
+        if (_phases.Length != result.Phases.Length)
+        {
+            _phases = new float[result.Phases.Length];
+        }
+
+        Array.Copy(result.Magnitudes, _magnitudes, result.Magnitudes.Length);
+        Array.Copy(result.Phases, _phases, result.Phases.Length);
+        _frame = new SpectrumFrame(_magnitudes, _phases, result.SampleRate, result.TimestampUtc);
     }
 
     private sealed class SpectrumDrawOp : ICustomDrawOperation
     {
+        private static readonly SKPaint TextPaint = new()
+        {
+            Color = SKColors.White,
+            TextSize = 14f,
+            IsAntialias = true
+        };
+
         private readonly Rect _bounds;
         private readonly VisualizerHost _host;
         private readonly RenderEngine _renderEngine;
@@ -191,14 +212,7 @@ public sealed class SpectrumView : Control
             var dest = new SKRect(0, 0, width, height);
             canvas.DrawImage(frame.Image, dest);
 
-            using var textPaint = new SKPaint
-            {
-                Color = SKColors.White,
-                TextSize = 14f,
-                IsAntialias = true
-            };
-
-            canvas.DrawText($"AudioFlow Spectrum · {_elapsed:mm\\:ss}", 12f, 22f, textPaint);
+            canvas.DrawText($"AudioFlow Spectrum · {_elapsed:mm\\:ss}", 12f, 22f, TextPaint);
         }
     }
 }
