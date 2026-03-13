@@ -4,9 +4,9 @@ using NAudio.CoreAudioApi;
 
 namespace AudioFlow.Audio.Providers;
 
-public static class AudioProviderFactory
+public sealed class AudioProviderFactory : IAudioProviderFactory
 {
-    public static IAudioProvider CreateSystemCaptureProvider()
+    public IAudioProvider CreateSystemCaptureProvider()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -26,7 +26,12 @@ public static class AudioProviderFactory
         throw new PlatformNotSupportedException("Unsupported platform.");
     }
 
-    public static IReadOnlyList<AudioDeviceInfo> GetWindowsCaptureDevices()
+    public IAudioProvider CreateFileProvider(string filePath)
+    {
+        return new FileAudioProvider(filePath);
+    }
+
+    public IReadOnlyList<AudioDeviceInfo> GetCaptureDevices()
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -37,16 +42,17 @@ public static class AudioProviderFactory
         using var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
         var list = new List<AudioDeviceInfo>();
 
+        var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         foreach (var device in devices)
         {
-            var isDefault = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia).ID == device.ID;
+            var isDefault = defaultDevice.ID == device.ID;
             list.Add(new AudioDeviceInfo(device.ID, device.FriendlyName, isDefault));
         }
 
         return list;
     }
 
-    public static WasapiAudioProvider CreateWasapiProvider(string deviceId)
+    public WasapiAudioProvider CreateWasapiProvider(string deviceId)
     {
         using var enumerator = new MMDeviceEnumerator();
         var device = enumerator.GetDevice(deviceId);
