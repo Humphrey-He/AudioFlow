@@ -44,6 +44,46 @@ public static class FftProcessor
         }
     }
 
+    public static void Compute(ReadOnlySpan<float> input, Span<Complex> output)
+    {
+        var length = input.Length;
+        if (length == 0)
+        {
+            return;
+        }
+
+        if ((length & (length - 1)) != 0)
+        {
+            throw new ArgumentException("FFT size must be a power of two.", nameof(input));
+        }
+
+        if (output.Length < length)
+        {
+            throw new ArgumentException("Output span is too small.", nameof(output));
+        }
+
+        var i = 0;
+        if (Vector.IsHardwareAccelerated)
+        {
+            var vecSize = Vector<float>.Count;
+            for (; i <= length - vecSize; i += vecSize)
+            {
+                var vector = new Vector<float>(input.Slice(i, vecSize));
+                for (var lane = 0; lane < vecSize; lane++)
+                {
+                    output[i + lane] = new Complex(vector[lane], 0d);
+                }
+            }
+        }
+
+        for (; i < length; i++)
+        {
+            output[i] = new Complex(input[i], 0d);
+        }
+
+        Compute(output, length);
+    }
+
     private static void BitReverse(Span<Complex> data, int n)
     {
         var j = 0;
