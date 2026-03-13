@@ -1,0 +1,11 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:AudioFlow.UI.Controls"
+        x:Class="AudioFlow.UI.MainWindow"
+        Width="1000"
+        Height="600"
+        Title="AudioFlow - Spectrum Prototype">
+  <Grid>
+    <controls:SpectrumView />
+  </Grid>
+</Window>
