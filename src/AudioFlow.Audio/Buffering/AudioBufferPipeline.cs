@@ -19,6 +19,10 @@ public sealed class AudioBufferPipeline : IDisposable
 
     public AudioBuffer Buffer => _buffer;
 
+    public int SampleRate => _provider.SampleRate;
+
+    public int Channels => _provider.Channels;
+
     public AudioProviderState State { get; private set; } = AudioProviderState.Uninitialized;
 
     public AudioProviderException? LastError { get; private set; }

@@ -7,8 +7,13 @@ using Avalonia.Rendering;
 using Avalonia.Threading;
 using AudioFlow.Audio.Buffering;
 using AudioFlow.Audio.Providers;
+using AudioFlow.Dsp.Analysis;
 using AudioFlow.Dsp.Processing;
+using AudioFlow.Dsp.Smoothing;
+using AudioFlow.Dsp.Weighting;
 using AudioFlow.Dsp.Windowing;
+using AudioFlow.Visualization.BuiltIn;
+using AudioFlow.Visualization.Core;
 using SkiaSharp;
 
 namespace AudioFlow.UI.Controls;
@@ -17,14 +22,33 @@ public sealed class SpectrumView : Control
 {
     private const int FftSize = 1024;
     private readonly float[] _sampleBuffer = new float[FftSize];
-    private readonly SpectrumAnalyzer _analyzer = new();
-    private readonly float[] _magnitudes = new float[FftSize / 2];
     private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
+    private readonly SpectrumAnalyzer _analyzer = new(new SpectrumAnalyzerOptions
+    {
+        FftSize = FftSize,
+        ZeroPaddingFactor = 1,
+        WindowFunction = WindowFunctionType.Hann,
+        IncludePhase = true
+    });
+
+    private readonly SpectrumProcessor _processor;
+    private readonly RenderEngine _renderEngine = new();
+    private readonly VisualizerHost _visualizerHost = new();
+
     private AudioBufferPipeline? _pipeline;
     private DispatcherTimer? _timer;
+    private SpectrumFrame _frame = new(Array.Empty<float>(), Array.Empty<float>(), 48000, DateTime.UtcNow);
 
     public SpectrumView()
     {
+        _processor = new SpectrumProcessor(
+            _analyzer,
+            FrequencyWeightingType.A,
+            new SmoothingSettings { Type = SmoothingType.Gravity, Attack = 0.6f, Decay = 0.2f },
+            logScale: true);
+
+        _visualizerHost.Add(new BarVisualizer());
+
         AttachedToVisualTree += OnAttachedToVisualTree;
         DetachedFromVisualTree += OnDetachedFromVisualTree;
     }
@@ -32,7 +56,7 @@ public sealed class SpectrumView : Control
     public override void Render(DrawingContext context)
     {
         var bounds = Bounds;
-        context.Custom(new SpectrumDrawOp(bounds, _magnitudes, _stopwatch.Elapsed));
+        context.Custom(new SpectrumDrawOp(bounds, _visualizerHost, _renderEngine, _frame, _stopwatch.Elapsed));
     }
 
     private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -91,21 +115,24 @@ public sealed class SpectrumView : Control
             return;
         }
 
-        var magnitudes = _analyzer.Analyze(_sampleBuffer, WindowFunctionType.Hann);
-        var length = Math.Min(magnitudes.Length, _magnitudes.Length);
-        Array.Copy(magnitudes, _magnitudes, length);
+        var result = _processor.Process(_sampleBuffer, _pipeline.SampleRate);
+        _frame = new SpectrumFrame(result.Magnitudes, result.Phases, result.SampleRate, result.TimestampUtc);
     }
 
     private sealed class SpectrumDrawOp : ICustomDrawOperation
     {
         private readonly Rect _bounds;
-        private readonly float[] _magnitudes;
+        private readonly VisualizerHost _host;
+        private readonly RenderEngine _renderEngine;
+        private readonly SpectrumFrame _frame;
         private readonly TimeSpan _elapsed;
 
-        public SpectrumDrawOp(Rect bounds, float[] magnitudes, TimeSpan elapsed)
+        public SpectrumDrawOp(Rect bounds, VisualizerHost host, RenderEngine renderEngine, SpectrumFrame frame, TimeSpan elapsed)
         {
             _bounds = bounds;
-            _magnitudes = magnitudes;
+            _host = host;
+            _renderEngine = renderEngine;
+            _frame = frame;
             _elapsed = elapsed;
         }
 
@@ -130,33 +157,17 @@ public sealed class SpectrumView : Control
             using var lease = leaseFeature.Lease();
             var canvas = lease.SkCanvas;
 
-            canvas.Clear(new SKColor(8, 8, 10));
+            var width = Math.Max(1, (int)_bounds.Width);
+            var height = Math.Max(1, (int)_bounds.Height);
 
-            if (_magnitudes.Length == 0)
-            {
-                return;
-            }
+            var frameCanvas = _renderEngine.BeginFrame(width, height);
+            frameCanvas.Clear(new SKColor(8, 8, 10));
 
-            var barCount = _magnitudes.Length;
-            var barWidth = (float)(_bounds.Width / barCount);
-            var maxHeight = (float)(_bounds.Height * 0.9);
+            var renderContext = new VisualizerRenderContext(new SKRect(0, 0, width, height));
+            _host.RenderAll(frameCanvas, _frame, renderContext);
 
-            using var barPaint = new SKPaint
-            {
-                Color = new SKColor(56, 217, 169),
-                IsAntialias = true
-            };
-
-            for (var i = 0; i < barCount; i++)
-            {
-                var magnitude = _magnitudes[i];
-                var normalized = Math.Clamp(magnitude / 50f, 0f, 1f);
-                var barHeight = normalized * maxHeight;
-                var x = i * barWidth;
-                var y = (float)_bounds.Height - barHeight;
-                var width = MathF.Max(1f, barWidth - 1f);
-                canvas.DrawRect(x, y, width, barHeight, barPaint);
-            }
+            using var image = _renderEngine.EndFrame();
+            canvas.DrawImage(image, 0, 0);
 
             using var textPaint = new SKPaint
             {
