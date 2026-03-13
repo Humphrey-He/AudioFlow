@@ -32,8 +32,9 @@ public sealed class SpectrumView : Control
     });
 
     private readonly SpectrumProcessor _processor;
-    private readonly RenderEngine _renderEngine = new();
+    private readonly RenderEngine _renderEngine = new(new RenderEngineSettings { TargetFps = 60 });
     private readonly VisualizerHost _visualizerHost = new();
+    private readonly PictureInPictureLayout _pipLayout = new();
 
     private AudioBufferPipeline? _pipeline;
     private DispatcherTimer? _timer;
@@ -47,7 +48,13 @@ public sealed class SpectrumView : Control
             new SmoothingSettings { Type = SmoothingType.Gravity, Attack = 0.6f, Decay = 0.2f },
             logScale: true);
 
-        _visualizerHost.Add(new BarVisualizer());
+        var primary = new BarVisualizer();
+        var inset = new BarVisualizer();
+        inset.SetParameter("AmplitudeScale", 80f);
+        inset.SetParameter("Color", new SKColor(255, 99, 132));
+
+        _visualizerHost.Add(primary);
+        _visualizerHost.Add(inset);
 
         AttachedToVisualTree += OnAttachedToVisualTree;
         DetachedFromVisualTree += OnDetachedFromVisualTree;
@@ -56,7 +63,7 @@ public sealed class SpectrumView : Control
     public override void Render(DrawingContext context)
     {
         var bounds = Bounds;
-        context.Custom(new SpectrumDrawOp(bounds, _visualizerHost, _renderEngine, _frame, _stopwatch.Elapsed));
+        context.Custom(new SpectrumDrawOp(bounds, _visualizerHost, _renderEngine, _pipLayout, _frame, _stopwatch.Elapsed, this));
     }
 
     private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -88,7 +95,8 @@ public sealed class SpectrumView : Control
 
     private void StartRenderLoop()
     {
-        _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(1000.0 / 60.0), DispatcherPriority.Render, (_, _) =>
+        var interval = TimeSpan.FromMilliseconds(1000.0 / _renderEngine.Settings.TargetFps);
+        _timer = new DispatcherTimer(interval, DispatcherPriority.Render, (_, _) =>
         {
             UpdateSpectrum();
             InvalidateVisual();
@@ -124,16 +132,21 @@ public sealed class SpectrumView : Control
         private readonly Rect _bounds;
         private readonly VisualizerHost _host;
         private readonly RenderEngine _renderEngine;
+        private readonly PictureInPictureLayout _pipLayout;
         private readonly SpectrumFrame _frame;
         private readonly TimeSpan _elapsed;
+        private readonly Visual _visual;
 
-        public SpectrumDrawOp(Rect bounds, VisualizerHost host, RenderEngine renderEngine, SpectrumFrame frame, TimeSpan elapsed)
+        public SpectrumDrawOp(Rect bounds, VisualizerHost host, RenderEngine renderEngine, PictureInPictureLayout pipLayout,
+            SpectrumFrame frame, TimeSpan elapsed, Visual visual)
         {
             _bounds = bounds;
             _host = host;
             _renderEngine = renderEngine;
+            _pipLayout = pipLayout;
             _frame = frame;
             _elapsed = elapsed;
+            _visual = visual;
         }
 
         public Rect Bounds => _bounds;
@@ -159,15 +172,24 @@ public sealed class SpectrumView : Control
 
             var width = Math.Max(1, (int)_bounds.Width);
             var height = Math.Max(1, (int)_bounds.Height);
+            var scale = (float)(_visual.VisualRoot?.RenderScaling ?? 1.0);
 
-            var frameCanvas = _renderEngine.BeginFrame(width, height);
-            frameCanvas.Clear(new SKColor(8, 8, 10));
+            var frameCanvas = _renderEngine.BeginFrame(width, height, scale);
+            frameCanvas.Clear(_renderEngine.Settings.BackgroundColor);
 
-            var renderContext = new VisualizerRenderContext(new SKRect(0, 0, width, height));
-            _host.RenderAll(frameCanvas, _frame, renderContext);
+            var renderContext = new VisualizerRenderContext(new SKRect(0, 0, width * scale, height * scale));
+            if (_host.Visualizers.Count > 1)
+            {
+                _host.RenderPictureInPicture(frameCanvas, _frame, renderContext, _pipLayout);
+            }
+            else
+            {
+                _host.RenderAll(frameCanvas, _frame, renderContext);
+            }
 
-            using var image = _renderEngine.EndFrame();
-            canvas.DrawImage(image, 0, 0);
+            using var frame = _renderEngine.EndFrame();
+            var dest = new SKRect(0, 0, width, height);
+            canvas.DrawImage(frame.Image, dest);
 
             using var textPaint = new SKPaint
             {
