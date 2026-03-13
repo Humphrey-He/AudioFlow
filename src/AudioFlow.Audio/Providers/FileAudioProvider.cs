@@ -2,6 +2,7 @@
 using AudioFlow.Audio.Abstractions;
 using NAudio.Wave;
 using TagLib;
+using File = System.IO.File;
 
 namespace AudioFlow.Audio.Providers;
 

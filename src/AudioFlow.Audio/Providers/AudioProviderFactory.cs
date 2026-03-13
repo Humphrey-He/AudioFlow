@@ -39,7 +39,7 @@ public sealed class AudioProviderFactory : IAudioProviderFactory
         }
 
         using var enumerator = new MMDeviceEnumerator();
-        using var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+        var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
         var list = new List<AudioDeviceInfo>();
 
         var defaultDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
