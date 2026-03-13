@@ -4,5 +4,6 @@ public enum WindowFunctionType
 {
     Hann,
     Hamming,
-    Blackman
+    Blackman,
+    Kaiser
 }

@@ -4,46 +4,40 @@ namespace AudioFlow.Dsp.Processing;
 
 public static class FftProcessor
 {
-    public static void Compute(ReadOnlySpan<float> input, Span<Complex> output)
+    public static void Compute(Span<Complex> data, int length)
     {
-        var n = input.Length;
-        if (n == 0)
+        if (length == 0)
         {
             return;
         }
 
-        if ((n & (n - 1)) != 0)
+        if ((length & (length - 1)) != 0)
         {
-            throw new ArgumentException("FFT size must be a power of two.", nameof(input));
+            throw new ArgumentException("FFT size must be a power of two.", nameof(length));
         }
 
-        if (output.Length < n)
+        if (data.Length < length)
         {
-            throw new ArgumentException("Output span is too small.", nameof(output));
+            throw new ArgumentException("Data span is too small.", nameof(data));
         }
 
-        for (var i = 0; i < n; i++)
-        {
-            output[i] = new Complex(input[i], 0d);
-        }
+        BitReverse(data, length);
 
-        BitReverse(output, n);
-
-        for (var len = 2; len <= n; len <<= 1)
+        for (var len = 2; len <= length; len <<= 1)
         {
             var angle = -2.0 * Math.PI / len;
             var wlen = new Complex(Math.Cos(angle), Math.Sin(angle));
 
-            for (var i = 0; i < n; i += len)
+            for (var i = 0; i < length; i += len)
             {
                 var w = Complex.One;
                 var half = len >> 1;
                 for (var j = 0; j < half; j++)
                 {
-                    var u = output[i + j];
-                    var v = output[i + j + half] * w;
-                    output[i + j] = u + v;
-                    output[i + j + half] = u - v;
+                    var u = data[i + j];
+                    var v = data[i + j + half] * w;
+                    data[i + j] = u + v;
+                    data[i + j + half] = u - v;
                     w *= wlen;
                 }
             }
