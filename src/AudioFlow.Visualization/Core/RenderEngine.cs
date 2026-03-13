@@ -7,12 +7,29 @@ public sealed class RenderEngine : IDisposable
     private SKSurface? _front;
     private SKSurface? _back;
     private SKImageInfo _info;
+    private float _lastScale = 1f;
 
-    public SKCanvas BeginFrame(int width, int height)
+    public RenderEngine(RenderEngineSettings? settings = null)
     {
-        if (_front == null || _back == null || _info.Width != width || _info.Height != height)
+        Settings = settings ?? new RenderEngineSettings();
+    }
+
+    public RenderEngineSettings Settings { get; }
+
+    public SKCanvas BeginFrame(int width, int height, float scale)
+    {
+        if (width <= 0 || height <= 0)
         {
-            _info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            throw new ArgumentOutOfRangeException("Render size must be positive.");
+        }
+
+        _lastScale = Settings.EnableDpiScaling ? Math.Max(1f, scale) : 1f;
+        var pixelWidth = Math.Max(1, (int)MathF.Round(width * _lastScale));
+        var pixelHeight = Math.Max(1, (int)MathF.Round(height * _lastScale));
+
+        if (_front == null || _back == null || _info.Width != pixelWidth || _info.Height != pixelHeight)
+        {
+            _info = new SKImageInfo(pixelWidth, pixelHeight, SKColorType.Bgra8888, SKAlphaType.Premul);
             _front?.Dispose();
             _back?.Dispose();
             _front = SKSurface.Create(_info);
@@ -22,7 +39,7 @@ public sealed class RenderEngine : IDisposable
         return _back!.Canvas;
     }
 
-    public SKImage EndFrame()
+    public RenderFrame EndFrame()
     {
         if (_front == null || _back == null)
         {
@@ -30,7 +47,8 @@ public sealed class RenderEngine : IDisposable
         }
 
         (_front, _back) = (_back, _front);
-        return _front.Snapshot();
+        var image = _front.Snapshot();
+        return new RenderFrame(image, _lastScale);
     }
 
     public void Dispose()
