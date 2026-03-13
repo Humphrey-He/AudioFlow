@@ -28,7 +28,7 @@ public sealed class CoreAudioProvider : AudioProviderBase
         SampleRate = 48000;
         Channels = 2;
 
-        _recordHandle = Bass.RecordStart(SampleRate, Channels, BassRecordFlags.RecordPause, OnRecordData);
+        _recordHandle = Bass.RecordStart(SampleRate, Channels, BassFlags.RecordPause, OnRecordData);
         if (_recordHandle == 0)
         {
             RaiseError(new AudioProviderException(AudioProviderErrorCode.DeviceNotAvailable, "Failed to start recording."));
@@ -107,3 +107,4 @@ public sealed class CoreAudioProvider : AudioProviderBase
         return true;
     }
 }
+
