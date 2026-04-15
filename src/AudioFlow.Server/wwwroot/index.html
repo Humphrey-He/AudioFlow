@@ -41,6 +41,26 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .lang-select {
+            background: #1a1a2e;
+            border: 1px solid #2a2a3a;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .lang-select:hover {
+            border-color: #38d9a9;
+        }
+
         .status {
             display: flex;
             align-items: center;
@@ -91,13 +111,54 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
         }
 
-        label {
+        .control-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 12px;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .tooltip-trigger {
+            cursor: help;
+            border-bottom: 1px dashed #666;
+            position: relative;
+        }
+
+        .tooltip-trigger::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            border: 1px solid #38d9a9;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            max-width: 280px;
+            white-space: normal;
+            text-transform: none;
+            letter-spacing: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            z-index: 100;
+            pointer-events: none;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .tooltip-trigger:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
 
         select, input[type="range"] {
@@ -169,6 +230,13 @@
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .tooltip-trigger::after {
+                left: 0;
+                transform: none;
+                right: 0;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -176,9 +244,16 @@
     <div class="container">
         <header>
             <h1>AudioFlow</h1>
-            <div class="status">
-                <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Disconnected</span>
+            <div class="header-right">
+                <select class="lang-select" id="langSelect">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <div class="status">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Disconnected</span>
+                </div>
             </div>
         </header>
 
@@ -187,46 +262,54 @@
 
             <div class="controls">
                 <div class="control-group">
-                    <label>Smoothing</label>
+                    <label class="control-label">
+                        <span class="tooltip-trigger" data-tooltip="" id="labelSmoothing">Smoothing</span>
+                    </label>
                     <select id="smoothingSelect">
-                        <option value="gravity">Gravity (Attack/Decay)</option>
-                        <option value="lerp">Linear Interpolation</option>
-                        <option value="none">None</option>
+                        <option value="gravity" id="optGravity">Gravity (Attack/Decay)</option>
+                        <option value="lerp" id="optLerp">Linear Interpolation</option>
+                        <option value="none" id="optNone">None</option>
                     </select>
                 </div>
                 <div class="control-group">
-                    <label>Attack Rate</label>
+                    <label class="control-label">
+                        <span class="tooltip-trigger" data-tooltip="" id="labelAttack">Attack Rate</span>
+                    </label>
                     <input type="range" id="attackRange" min="0.1" max="1.0" step="0.1" value="0.6">
                 </div>
                 <div class="control-group">
-                    <label>Decay Rate</label>
+                    <label class="control-label">
+                        <span class="tooltip-trigger" data-tooltip="" id="labelDecay">Decay Rate</span>
+                    </label>
                     <input type="range" id="decayRange" min="0.1" max="1.0" step="0.1" value="0.2">
                 </div>
                 <div class="control-group">
-                    <label>Weighting</label>
+                    <label class="control-label">
+                        <span class="tooltip-trigger" data-tooltip="" id="labelWeighting">Weighting</span>
+                    </label>
                     <select id="weightingSelect">
-                        <option value="A">A-Weighting</option>
-                        <option value="C">C-Weighting</option>
-                        <option value="Linear">Linear</option>
+                        <option value="A" id="optA">A-Weighting</option>
+                        <option value="C" id="optC">C-Weighting</option>
+                        <option value="Linear" id="optLinear">Linear</option>
                     </select>
                 </div>
             </div>
 
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-label">Frame</div>
+                    <div class="stat-label" id="statFrame">Frame</div>
                     <div class="stat-value" id="frameCount">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Peak dB</div>
+                    <div class="stat-label" id="statPeak">Peak dB</div>
                     <div class="stat-value" id="peakDb">-∞</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Avg dB</div>
+                    <div class="stat-label" id="statAvg">Avg dB</div>
                     <div class="stat-value" id="avgDb">-∞</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">FPS</div>
+                    <div class="stat-label" id="statFps">FPS</div>
                     <div class="stat-value" id="fps">0</div>
                 </div>
             </div>
@@ -238,6 +321,81 @@
     </div>
 
     <script>
+        const translations = {
+            en: {
+                title: 'AudioFlow - Spectrum Visualizer',
+                disconnected: 'Disconnected',
+                connected: 'Connected',
+                labelSmoothing: 'Smoothing',
+                labelAttack: 'Attack Rate',
+                labelDecay: 'Decay Rate',
+                labelWeighting: 'Weighting',
+                optGravity: 'Gravity (Attack/Decay)',
+                optLerp: 'Linear Interpolation',
+                optNone: 'None',
+                optA: 'A-Weighting',
+                optC: 'C-Weighting',
+                optLinear: 'Linear',
+                statFrame: 'Frame',
+                statPeak: 'Peak dB',
+                statAvg: 'Avg dB',
+                statFps: 'FPS',
+                errorConnect: 'Unable to connect to AudioFlow server. Please ensure the backend is running.',
+                tooltipSmoothing: 'Smoothing algorithm for frequency magnitude changes. Gravity provides natural attack/decay response.',
+                tooltipAttack: 'Speed of magnitude increase toward new higher values. Higher = faster response to sudden loud sounds.',
+                tooltipDecay: 'Speed of magnitude decrease toward lower values. Higher = faster fade after sound stops.',
+                tooltipWeighting: 'Frequency weighting curve. A simulates human ear sensitivity, C is flatter, Linear is unweighted.'
+            },
+            zh: {
+                title: 'AudioFlow - 频谱可视化',
+                disconnected: '未连接',
+                connected: '已连接',
+                labelSmoothing: '平滑算法',
+                labelAttack: '攻击速率',
+                labelDecay: '衰减速率',
+                labelWeighting: '频率加权',
+                optGravity: '重力 (攻击/衰减)',
+                optLerp: '线性插值',
+                optNone: '无',
+                optA: 'A加权',
+                optC: 'C加权',
+                optLinear: '线性',
+                statFrame: '帧',
+                statPeak: '峰值 dB',
+                statAvg: '平均 dB',
+                statFps: '帧率',
+                errorConnect: '无法连接到 AudioFlow 服务器，请确保后端正在运行。',
+                tooltipSmoothing: '频率幅度变化的平滑算法。重力模式提供自然的攻击/衰减响应。',
+                tooltipAttack: '幅度向新的更高值增加的速度。越高 = 对突然响亮声音的响应越快。',
+                tooltipDecay: '幅度向更低的值下降的速度。越高 = 声音停止后衰减越快。',
+                tooltipWeighting: '频率加权曲线。A模拟人耳灵敏度，C更平坦，Linear为不加权。'
+            },
+            ja: {
+                title: 'AudioFlow - スペクトラムビジュアライザー',
+                disconnected: '未接続',
+                connected: '接続済み',
+                labelSmoothing: 'スムージング',
+                labelAttack: 'アタック',
+                labelDecay: 'ディケイ',
+                labelWeighting: '周波数重み',
+                optGravity: 'グラビティ (アタック/ディケイ)',
+                optLerp: '線形補間',
+                optNone: 'なし',
+                optA: 'A重み',
+                optC: 'C重み',
+                optLinear: '線形',
+                statFrame: 'フレーム',
+                statPeak: 'ピーク dB',
+                statAvg: '平均 dB',
+                statFps: 'FPS',
+                errorConnect: 'AudioFlowサーバーに接続できません。バックエンドが実行されていることを確認してください。',
+                tooltipSmoothing: '周波数マグニチュード変化のスムージングアルゴリズム。グラビティは自然なアタック/ディケイ応答を提供します。',
+                tooltipAttack: '新しい高い値へのマグニチュード増加の速度。高い = 急に大きな音に対する反応が速くなります。',
+                tooltipDecay: 'より低い値へのマグニチュード減少の速度。高い = 音が止んだ後の減衰が速くなります。',
+                tooltipWeighting: '周波数重み曲線。Aは人間の耳の感度を模擬、Cはより平坦、Linearは無重みです。'
+            }
+        };
+
         const canvas = document.getElementById('spectrumCanvas');
         const ctx = canvas.getContext('2d');
         const statusDot = document.getElementById('statusDot');
@@ -247,17 +405,55 @@
         const avgDbEl = document.getElementById('avgDb');
         const fpsEl = document.getElementById('fps');
         const errorMessage = document.getElementById('errorMessage');
+        const langSelect = document.getElementById('langSelect');
 
         let ws = null;
         let animationId = null;
         let lastFrameTime = performance.now();
         let frameCount = 0;
         let fps = 0;
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            document.title = t.title;
+            document.getElementById('labelSmoothing').textContent = t.labelSmoothing;
+            document.getElementById('labelAttack').textContent = t.labelAttack;
+            document.getElementById('labelDecay').textContent = t.labelDecay;
+            document.getElementById('labelWeighting').textContent = t.labelWeighting;
+            document.getElementById('optGravity').textContent = t.optGravity;
+            document.getElementById('optLerp').textContent = t.optLerp;
+            document.getElementById('optNone').textContent = t.optNone;
+            document.getElementById('optA').textContent = t.optA;
+            document.getElementById('optC').textContent = t.optC;
+            document.getElementById('optLinear').textContent = t.optLinear;
+            document.getElementById('statFrame').textContent = t.statFrame;
+            document.getElementById('statPeak').textContent = t.statPeak;
+            document.getElementById('statAvg').textContent = t.statAvg;
+            document.getElementById('statFps').textContent = t.statFps;
+            errorMessage.textContent = t.errorConnect;
+
+            // Update tooltips
+            document.getElementById('labelSmoothing').setAttribute('data-tooltip', t.tooltipSmoothing);
+            document.getElementById('labelAttack').setAttribute('data-tooltip', t.tooltipAttack);
+            document.getElementById('labelDecay').setAttribute('data-tooltip', t.tooltipDecay);
+            document.getElementById('labelWeighting').setAttribute('data-tooltip', t.tooltipWeighting);
+
+            // Update status text if disconnected
+            if (statusText.textContent === 'Disconnected' || statusText.textContent === '未连接' || statusText.textContent === '未接続') {
+                statusText.textContent = t.disconnected;
+            }
+
+            localStorage.setItem('audioflow_lang', lang);
+        }
+
+        langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
 
         // Resize canvas to match container
         function resizeCanvas() {
             const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width - 60; // Account for padding
+            canvas.width = rect.width - 60;
             canvas.height = 300;
             drawFrame();
         }
@@ -270,12 +466,10 @@
             const width = canvas.width;
             const height = canvas.height;
 
-            // Clear canvas
             ctx.fillStyle = '#0a0a0f';
             ctx.fillRect(0, 0, width, height);
 
             if (magnitudes.length === 0) {
-                // Draw placeholder bars
                 ctx.fillStyle = '#2a2a3a';
                 for (let i = 0; i < 60; i++) {
                     const x = i * (width / 60);
@@ -285,11 +479,9 @@
                 return;
             }
 
-            // Draw frequency bars
             const barCount = magnitudes.length;
             const barWidth = width / barCount;
 
-            // Create gradient
             const gradient = ctx.createLinearGradient(0, height, 0, 0);
             gradient.addColorStop(0, '#38d9a9');
             gradient.addColorStop(0.5, '#6c5ce7');
@@ -299,7 +491,6 @@
 
             for (let i = 0; i < barCount; i++) {
                 const magnitude = magnitudes[i];
-                // Normalize magnitude (typically -180 to 0 dB)
                 const normalized = Math.max(0, (magnitude + 60) / 60);
                 const barHeight = normalized * height;
 
@@ -307,7 +498,6 @@
                 ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
             }
 
-            // Draw grid lines
             ctx.strokeStyle = '#2a2a3a';
             ctx.lineWidth = 1;
             for (let i = 0; i < 5; i++) {
@@ -318,7 +508,6 @@
                 ctx.stroke();
             }
 
-            // Draw frequency labels
             ctx.fillStyle = '#666';
             ctx.font = '10px monospace';
             const labels = ['20Hz', '100Hz', '1kHz', '10kHz', '20kHz'];
@@ -339,7 +528,6 @@
                 avgDbEl.textContent = avg > -180 ? avg.toFixed(1) : '-∞';
             }
 
-            // Calculate FPS
             const now = performance.now();
             frameCount++;
             if (now - lastFrameTime >= 1000) {
@@ -349,7 +537,6 @@
                 lastFrameTime = now;
             }
 
-            // Draw the visualization
             drawFrame(data.magnitudes || []);
         }
 
@@ -363,7 +550,7 @@
 
                 ws.onopen = () => {
                     statusDot.className = 'status-dot connected';
-                    statusText.textContent = 'Connected';
+                    statusText.textContent = translations[currentLang].connected;
                     errorMessage.classList.remove('visible');
                 };
 
@@ -378,7 +565,7 @@
 
                 ws.onclose = () => {
                     statusDot.className = 'status-dot disconnected';
-                    statusText.textContent = 'Disconnected';
+                    statusText.textContent = translations[currentLang].disconnected;
                     setTimeout(connect, 2000);
                 };
 
@@ -391,6 +578,11 @@
                 setTimeout(connect, 2000);
             }
         }
+
+        // Init language from localStorage
+        const savedLang = localStorage.getItem('audioflow_lang') || 'en';
+        langSelect.value = savedLang;
+        setLanguage(savedLang);
 
         // Start
         drawFrame();
