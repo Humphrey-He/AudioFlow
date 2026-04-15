@@ -1,0 +1,30 @@
+:root {
+  --color-bg: #0a0a0f;
+  --color-surface: #12121a;
+  --color-card: #1a1a2e;
+  --color-border: #2a2a3a;
+  --color-text: #ffffff;
+  --color-text-muted: #888;
+  --color-primary: #38d9a9;
+  --color-secondary: #6c5ce7;
+  --color-accent: #e74c3c;
+  --color-error: #e74c3c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}

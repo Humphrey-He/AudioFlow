@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "AudioFlow"
+  },
+  "status": {
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "connecting": "Connecting...",
+    "reconnecting": "Reconnecting...",
+    "error": "Connection Error"
+  },
+  "controls": {
+    "smoothing": "Smoothing",
+    "attack": "Attack Rate",
+    "decay": "Decay Rate",
+    "weighting": "Weighting",
+    "gravity": "Gravity (Attack/Decay)",
+    "lerp": "Linear Interpolation",
+    "none": "None",
+    "aWeighting": "A-Weighting",
+    "cWeighting": "C-Weighting",
+    "linear": "Linear"
+  },
+  "effects": {
+    "title": "Effects",
+    "glow": "Glow",
+    "reflection": "Reflection",
+    "peak": "Peak Hold",
+    "pulse": "Background Pulse",
+    "centerLine": "Center Line",
+    "glowTooltip": "Add glow effect to high-energy bars (above -20dB)",
+    "reflectionTooltip": "Show mirrored reflection below each bar",
+    "peakTooltip": "Hold peak values for 1.5s before decaying",
+    "pulseTooltip": "Background pulses with low-frequency energy",
+    "lineTooltip": "Draw smooth curve connecting bar midpoints"
+  },
+  "stats": {
+    "frame": "Frame",
+    "peak": "Peak dB",
+    "avg": "Avg dB",
+    "fps": "FPS"
+  },
+  "error": {
+    "connect": "Unable to connect to AudioFlow server. Please ensure the backend is running."
+  },
+  "preset": {
+    "default": "Default",
+    "bassic": "Bassic",
+    "vivid": "Vivid",
+    "minimal": "Minimal",
+    "custom": "Custom"
+  }
+}

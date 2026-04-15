@@ -1,0 +1,27 @@
+.panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.card {
+  background: var(--color-card);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 4px;
+}

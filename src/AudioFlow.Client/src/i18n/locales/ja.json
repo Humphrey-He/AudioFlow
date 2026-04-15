@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "AudioFlow"
+  },
+  "status": {
+    "connected": "接続済み",
+    "disconnected": "未接続",
+    "connecting": "接続中...",
+    "reconnecting": "再接続中...",
+    "error": "接続エラー"
+  },
+  "controls": {
+    "smoothing": "スムージング",
+    "attack": "アタック",
+    "decay": "ディケイ",
+    "weighting": "周波数重み",
+    "gravity": "グラビティ (アタック/ディケイ)",
+    "lerp": "線形補間",
+    "none": "なし",
+    "aWeighting": "A重み",
+    "cWeighting": "C重み",
+    "linear": "線形"
+  },
+  "effects": {
+    "title": "エフェクト",
+    "glow": "グロー",
+    "reflection": "リフレクション",
+    "peak": "ピークホールド",
+    "pulse": "背景パルス",
+    "centerLine": "センターバランス",
+    "glowTooltip": "高エネルギーバー (> -20dB) にグロー効果を加える",
+    "reflectionTooltip": "各バーの下にミラーリフレクションを表示",
+    "peakTooltip": "ピークを1.5秒間保持してから減衰",
+    "pulseTooltip": "低周波エネルギーと連動して背景が脈動",
+    "lineTooltip": "バーの中間点を結ぶスムーズなカーブを描画"
+  },
+  "stats": {
+    "frame": "フレーム",
+    "peak": "ピーク dB",
+    "avg": "平均 dB",
+    "fps": "FPS"
+  },
+  "error": {
+    "connect": "AudioFlowサーバーに接続できません。バックエンドが実行されていることを確認してください。"
+  },
+  "preset": {
+    "default": "デフォルト",
+    "bassic": "ベシック",
+    "vivid": "ビビッド",
+    "minimal": "ミニマル",
+    "custom": "カスタム"
+  }
+}

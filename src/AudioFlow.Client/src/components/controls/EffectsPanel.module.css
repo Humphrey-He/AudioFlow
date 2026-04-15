@@ -1,0 +1,54 @@
+.panel {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.title {
+  font-size: 11px;
+  color: #666;
+  margin-right: 4px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-card);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.toggle:hover {
+  border-color: var(--color-primary);
+}
+
+.toggle.active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.toggle input {
+  display: none;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: all 0.2s;
+}
+
+.toggle.active .indicator {
+  background: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary);
+}

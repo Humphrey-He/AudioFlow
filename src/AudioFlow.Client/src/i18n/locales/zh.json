@@ -1,0 +1,53 @@
+{
+  "app": {
+    "title": "AudioFlow"
+  },
+  "status": {
+    "connected": "已连接",
+    "disconnected": "未连接",
+    "connecting": "连接中...",
+    "reconnecting": "重新连接...",
+    "error": "连接错误"
+  },
+  "controls": {
+    "smoothing": "平滑算法",
+    "attack": "攻击速率",
+    "decay": "衰减速率",
+    "weighting": "频率加权",
+    "gravity": "重力 (攻击/衰减)",
+    "lerp": "线性插值",
+    "none": "无",
+    "aWeighting": "A加权",
+    "cWeighting": "C加权",
+    "linear": "线性"
+  },
+  "effects": {
+    "title": "动效",
+    "glow": "发光",
+    "reflection": "倒影",
+    "peak": "峰值保持",
+    "pulse": "背景脉动",
+    "centerLine": "中心线",
+    "glowTooltip": "为高能量条形添加发光效果 (>-20dB)",
+    "reflectionTooltip": "在每个条形下方显示镜像倒影",
+    "peakTooltip": "保持峰值1.5秒后开始衰减",
+    "pulseTooltip": "背景随低频能量脉动",
+    "lineTooltip": "绘制连接条形中点的平滑曲线"
+  },
+  "stats": {
+    "frame": "帧",
+    "peak": "峰值 dB",
+    "avg": "平均 dB",
+    "fps": "帧率"
+  },
+  "error": {
+    "connect": "无法连接到 AudioFlow 服务器，请确保后端正在运行。"
+  },
+  "preset": {
+    "default": "默认",
+    "bassic": "电子",
+    "vivid": "炫彩",
+    "minimal": "简约",
+    "custom": "自定义"
+  }
+}

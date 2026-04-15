@@ -1,0 +1,38 @@
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.dot.connected {
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.dot.disconnected {
+  background: var(--color-error);
+}
+
+.dot.connecting,
+.dot.reconnecting {
+  background: #f39c12;
+  animation: pulse 1s infinite;
+}
+
+.dot.error {
+  background: var(--color-error);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
