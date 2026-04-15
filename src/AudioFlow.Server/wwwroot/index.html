@@ -47,7 +47,7 @@
             gap: 16px;
         }
 
-        .lang-select {
+        .lang-select, .effect-select {
             background: #1a1a2e;
             border: 1px solid #2a2a3a;
             color: white;
@@ -57,7 +57,7 @@
             cursor: pointer;
         }
 
-        .lang-select:hover {
+        .lang-select:hover, .effect-select:hover {
             border-color: #38d9a9;
         }
 
@@ -222,6 +222,61 @@
             display: block;
         }
 
+        .effects-panel {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .effect-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #1a1a2e;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #2a2a3a;
+            cursor: pointer;
+            font-size: 12px;
+            color: #888;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .effect-toggle:hover {
+            border-color: #38d9a9;
+        }
+
+        .effect-toggle.active {
+            border-color: #38d9a9;
+            color: #38d9a9;
+        }
+
+        .effect-toggle input {
+            display: none;
+        }
+
+        .effect-toggle .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2a2a3a;
+            transition: all 0.2s;
+        }
+
+        .effect-toggle.active .indicator {
+            background: #38d9a9;
+            box-shadow: 0 0 6px #38d9a9;
+        }
+
+        .preset-label {
+            font-size: 11px;
+            color: #666;
+            margin-left: 8px;
+        }
+
         @media (max-width: 768px) {
             .visualizer-container {
                 padding: 15px;
@@ -245,6 +300,13 @@
         <header>
             <h1>AudioFlow</h1>
             <div class="header-right">
+                <select class="effect-select" id="effectPreset">
+                    <option value="default">Default</option>
+                    <option value="bassic">Bassic</option>
+                    <option value="vivid">Vivid</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="custom">Custom</option>
+                </select>
                 <select class="lang-select" id="langSelect">
                     <option value="en">English</option>
                     <option value="zh">中文</option>
@@ -259,6 +321,35 @@
 
         <div class="visualizer-container">
             <canvas id="spectrumCanvas" class="spectrum-canvas"></canvas>
+
+            <div class="effects-panel">
+                <span class="preset-label" id="labelEffects">Effects:</span>
+                <label class="effect-toggle active" id="toggleGlow">
+                    <input type="checkbox" checked>
+                    <span class="indicator"></span>
+                    <span id="effGlow" data-tooltip="">Glow</span>
+                </label>
+                <label class="effect-toggle active" id="toggleReflection">
+                    <input type="checkbox" checked>
+                    <span class="indicator"></span>
+                    <span id="effReflection" data-tooltip="">Reflection</span>
+                </label>
+                <label class="effect-toggle active" id="togglePeak">
+                    <input type="checkbox" checked>
+                    <span class="indicator"></span>
+                    <span id="effPeak" data-tooltip="">Peak Hold</span>
+                </label>
+                <label class="effect-toggle" id="togglePulse">
+                    <input type="checkbox">
+                    <span class="indicator"></span>
+                    <span id="effPulse" data-tooltip="">Background Pulse</span>
+                </label>
+                <label class="effect-toggle" id="toggleCenterLine">
+                    <input type="checkbox">
+                    <span class="indicator"></span>
+                    <span id="effLine" data-tooltip="">Center Line</span>
+                </label>
+            </div>
 
             <div class="controls">
                 <div class="control-group">
@@ -330,6 +421,7 @@
                 labelAttack: 'Attack Rate',
                 labelDecay: 'Decay Rate',
                 labelWeighting: 'Weighting',
+                labelEffects: 'Effects:',
                 optGravity: 'Gravity (Attack/Decay)',
                 optLerp: 'Linear Interpolation',
                 optNone: 'None',
@@ -344,7 +436,17 @@
                 tooltipSmoothing: 'Smoothing algorithm for frequency magnitude changes. Gravity provides natural attack/decay response.',
                 tooltipAttack: 'Speed of magnitude increase toward new higher values. Higher = faster response to sudden loud sounds.',
                 tooltipDecay: 'Speed of magnitude decrease toward lower values. Higher = faster fade after sound stops.',
-                tooltipWeighting: 'Frequency weighting curve. A simulates human ear sensitivity, C is flatter, Linear is unweighted.'
+                tooltipWeighting: 'Frequency weighting curve. A simulates human ear sensitivity, C is flatter, Linear is unweighted.',
+                effGlow: 'Glow',
+                effReflection: 'Reflection',
+                effPeak: 'Peak Hold',
+                effPulse: 'Background Pulse',
+                effLine: 'Center Line',
+                tooltipGlow: 'Add glow effect to high-energy bars (above -20dB)',
+                tooltipReflection: 'Show mirrored reflection below each bar',
+                tooltipPeak: 'Hold peak values for 1.5s before decaying',
+                tooltipPulse: 'Background pulses with low-frequency energy',
+                tooltipLine: 'Draw smooth curve connecting bar midpoints'
             },
             zh: {
                 title: 'AudioFlow - 频谱可视化',
@@ -354,6 +456,7 @@
                 labelAttack: '攻击速率',
                 labelDecay: '衰减速率',
                 labelWeighting: '频率加权',
+                labelEffects: '动效:',
                 optGravity: '重力 (攻击/衰减)',
                 optLerp: '线性插值',
                 optNone: '无',
@@ -368,7 +471,17 @@
                 tooltipSmoothing: '频率幅度变化的平滑算法。重力模式提供自然的攻击/衰减响应。',
                 tooltipAttack: '幅度向新的更高值增加的速度。越高 = 对突然响亮声音的响应越快。',
                 tooltipDecay: '幅度向更低的值下降的速度。越高 = 声音停止后衰减越快。',
-                tooltipWeighting: '频率加权曲线。A模拟人耳灵敏度，C更平坦，Linear为不加权。'
+                tooltipWeighting: '频率加权曲线。A模拟人耳灵敏度，C更平坦，Linear为不加权。',
+                effGlow: '发光',
+                effReflection: '倒影',
+                effPeak: '峰值保持',
+                effPulse: '背景脉动',
+                effLine: '中心线',
+                tooltipGlow: '为高能量条形添加发光效果 (>-20dB)',
+                tooltipReflection: '在每个条形下方显示镜像倒影',
+                tooltipPeak: '保持峰值1.5秒后开始衰减',
+                tooltipPulse: '背景随低频能量脉动',
+                tooltipLine: '绘制连接条形中点的平滑曲线'
             },
             ja: {
                 title: 'AudioFlow - スペクトラムビジュアライザー',
@@ -378,6 +491,7 @@
                 labelAttack: 'アタック',
                 labelDecay: 'ディケイ',
                 labelWeighting: '周波数重み',
+                labelEffects: 'エフェクト:',
                 optGravity: 'グラビティ (アタック/ディケイ)',
                 optLerp: '線形補間',
                 optNone: 'なし',
@@ -392,8 +506,26 @@
                 tooltipSmoothing: '周波数マグニチュード変化のスムージングアルゴリズム。グラビティは自然なアタック/ディケイ応答を提供します。',
                 tooltipAttack: '新しい高い値へのマグニチュード増加の速度。高い = 急に大きな音に対する反応が速くなります。',
                 tooltipDecay: 'より低い値へのマグニチュード減少の速度。高い = 音が止んだ後の減衰が速くなります。',
-                tooltipWeighting: '周波数重み曲線。Aは人間の耳の感度を模擬、Cはより平坦、Linearは無重みです。'
+                tooltipWeighting: '周波数重み曲線。Aは人間の耳の感度を模擬、Cはより平坦、Linearは無重みです。',
+                effGlow: 'グロー',
+                effReflection: 'リフレクション',
+                effPeak: 'ピークホールド',
+                effPulse: '背景パルス',
+                effLine: 'センターバランス',
+                tooltipGlow: '高エネルギーバー (> -20dB) にグロー効果を加える',
+                tooltipReflection: '各バーの下にミラーリフレクションを表示',
+                tooltipPeak: 'ピークを1.5秒間保持してから減衰',
+                tooltipPulse: '低周波エネルギーと連動して背景が脈動',
+                tooltipLine: 'バーの中間点を結ぶスムーズなカーブを描画'
             }
+        };
+
+        const effectPresets = {
+            default: { glow: true, reflection: true, peak: true, pulse: false, centerLine: false },
+            bassic: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true },
+            vivid: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true },
+            minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false },
+            custom: null
         };
 
         const canvas = document.getElementById('spectrumCanvas');
@@ -406,6 +538,14 @@
         const fpsEl = document.getElementById('fps');
         const errorMessage = document.getElementById('errorMessage');
         const langSelect = document.getElementById('langSelect');
+        const effectPreset = document.getElementById('effectPreset');
+
+        // Effect toggles
+        const toggleGlow = document.getElementById('toggleGlow');
+        const toggleReflection = document.getElementById('toggleReflection');
+        const togglePeak = document.getElementById('togglePeak');
+        const togglePulse = document.getElementById('togglePulse');
+        const toggleCenterLine = document.getElementById('toggleCenterLine');
 
         let ws = null;
         let animationId = null;
@@ -413,6 +553,15 @@
         let frameCount = 0;
         let fps = 0;
         let currentLang = 'en';
+
+        // Animation state
+        let effects = { glow: true, reflection: true, peak: true, pulse: false, centerLine: false };
+        let peakValues = [];
+        let peakHoldTimes = [];
+        let lowFrequencyEnergy = 0;
+        let backgroundPulsePhase = 0;
+        const PEAK_HOLD_DURATION = 1500;
+        const PEAK_DECAY_TIME = 500;
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -422,6 +571,7 @@
             document.getElementById('labelAttack').textContent = t.labelAttack;
             document.getElementById('labelDecay').textContent = t.labelDecay;
             document.getElementById('labelWeighting').textContent = t.labelWeighting;
+            document.getElementById('labelEffects').textContent = t.labelEffects;
             document.getElementById('optGravity').textContent = t.optGravity;
             document.getElementById('optLerp').textContent = t.optLerp;
             document.getElementById('optNone').textContent = t.optNone;
@@ -433,14 +583,24 @@
             document.getElementById('statAvg').textContent = t.statAvg;
             document.getElementById('statFps').textContent = t.statFps;
             errorMessage.textContent = t.errorConnect;
+            document.getElementById('effGlow').textContent = t.effGlow;
+            document.getElementById('effReflection').textContent = t.effReflection;
+            document.getElementById('effPeak').textContent = t.effPeak;
+            document.getElementById('effPulse').textContent = t.effPulse;
+            document.getElementById('effLine').textContent = t.effLine;
 
             // Update tooltips
             document.getElementById('labelSmoothing').setAttribute('data-tooltip', t.tooltipSmoothing);
             document.getElementById('labelAttack').setAttribute('data-tooltip', t.tooltipAttack);
             document.getElementById('labelDecay').setAttribute('data-tooltip', t.tooltipDecay);
             document.getElementById('labelWeighting').setAttribute('data-tooltip', t.tooltipWeighting);
+            document.getElementById('effGlow').setAttribute('data-tooltip', t.tooltipGlow);
+            document.getElementById('effReflection').setAttribute('data-tooltip', t.tooltipReflection);
+            document.getElementById('effPeak').setAttribute('data-tooltip', t.tooltipPeak);
+            document.getElementById('effPulse').setAttribute('data-tooltip', t.tooltipPulse);
+            document.getElementById('effLine').setAttribute('data-tooltip', t.tooltipLine);
 
-            // Update status text if disconnected
+            // Update status
             if (statusText.textContent === 'Disconnected' || statusText.textContent === '未连接' || statusText.textContent === '未接続') {
                 statusText.textContent = t.disconnected;
             }
@@ -448,28 +608,107 @@
             localStorage.setItem('audioflow_lang', lang);
         }
 
+        function updateEffectUI() {
+            toggleGlow.classList.toggle('active', effects.glow);
+            toggleReflection.classList.toggle('active', effects.reflection);
+            togglePeak.classList.toggle('active', effects.peak);
+            togglePulse.classList.toggle('active', effects.pulse);
+            toggleCenterLine.classList.toggle('active', effects.centerLine);
+            toggleGlow.querySelector('input').checked = effects.glow;
+            toggleReflection.querySelector('input').checked = effects.reflection;
+            togglePeak.querySelector('input').checked = effects.peak;
+            togglePulse.querySelector('input').checked = effects.pulse;
+            toggleCenterLine.querySelector('input').checked = effects.centerLine;
+        }
+
+        function applyPreset(name) {
+            const preset = effectPresets[name];
+            if (preset) {
+                effects = { ...preset };
+                updateEffectUI();
+                localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+            }
+        }
+
         langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
 
-        // Resize canvas to match container
+        effectPreset.addEventListener('change', (e) => {
+            applyPreset(e.target.value);
+        });
+
+        toggleGlow.addEventListener('click', () => {
+            effects.glow = !effects.glow;
+            effectPreset.value = 'custom';
+            updateEffectUI();
+            localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+        });
+
+        toggleReflection.addEventListener('click', () => {
+            effects.reflection = !effects.reflection;
+            effectPreset.value = 'custom';
+            updateEffectUI();
+            localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+        });
+
+        togglePeak.addEventListener('click', () => {
+            effects.peak = !effects.peak;
+            effectPreset.value = 'custom';
+            updateEffectUI();
+            localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+        });
+
+        togglePulse.addEventListener('click', () => {
+            effects.pulse = !effects.pulse;
+            effectPreset.value = 'custom';
+            updateEffectUI();
+            localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+        });
+
+        toggleCenterLine.addEventListener('click', () => {
+            effects.centerLine = !effects.centerLine;
+            effectPreset.value = 'custom';
+            updateEffectUI();
+            localStorage.setItem('audioflow_effects', JSON.stringify(effects));
+        });
+
         function resizeCanvas() {
             const rect = canvas.parentElement.getBoundingClientRect();
             canvas.width = rect.width - 60;
             canvas.height = 300;
+            peakValues = new Array(512).fill(-180);
+            peakHoldTimes = new Array(512).fill(0);
             drawFrame();
         }
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Draw spectrum frame
         function drawFrame(magnitudes = []) {
             const width = canvas.width;
             const height = canvas.height;
 
-            ctx.fillStyle = '#0a0a0f';
-            ctx.fillRect(0, 0, width, height);
+            // Background pulse
+            if (effects.pulse && magnitudes.length > 0) {
+                const lowFreqCount = Math.floor(magnitudes.length * 0.1);
+                let lowSum = 0;
+                for (let i = 0; i < lowFreqCount; i++) {
+                    lowSum += Math.max(0, (magnitudes[i] + 60) / 60);
+                }
+                lowFrequencyEnergy = lowSum / lowFreqCount;
+                backgroundPulsePhase = (backgroundPulsePhase + 0.05) % (Math.PI * 2);
+                const pulseIntensity = 0.15 * lowFrequencyEnergy * (0.5 + 0.5 * Math.sin(backgroundPulsePhase));
+                const r = Math.floor(0x0a + pulseIntensity * 0x08);
+                const g = Math.floor(0x0a + pulseIntensity * 0x0a);
+                const b = Math.floor(0x0f + pulseIntensity * 0x08);
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(0, 0, width, height);
+            } else {
+                ctx.fillStyle = '#0a0a0f';
+                ctx.fillRect(0, 0, width, height);
+            }
 
             if (magnitudes.length === 0) {
+                // Draw placeholder bars
                 ctx.fillStyle = '#2a2a3a';
                 for (let i = 0; i < 60; i++) {
                     const x = i * (width / 60);
@@ -482,22 +721,119 @@
             const barCount = magnitudes.length;
             const barWidth = width / barCount;
 
-            const gradient = ctx.createLinearGradient(0, height, 0, 0);
-            gradient.addColorStop(0, '#38d9a9');
-            gradient.addColorStop(0.5, '#6c5ce7');
-            gradient.addColorStop(1, '#e74c3c');
+            // Draw reflections first (behind bars)
+            if (effects.reflection) {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                for (let i = 0; i < barCount; i++) {
+                    const magnitude = magnitudes[i];
+                    const normalized = Math.max(0, (magnitude + 60) / 60);
+                    const barHeight = normalized * height;
+                    const reflectionHeight = barHeight * 0.3;
+                    const x = i * barWidth;
 
-            ctx.fillStyle = gradient;
+                    const gradient = ctx.createLinearGradient(0, height, 0, height + reflectionHeight);
+                    gradient.addColorStop(0, '#38d9a9');
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, height + 10, barWidth - 1, reflectionHeight);
+                }
+                ctx.restore();
+            }
 
+            // Draw bars
             for (let i = 0; i < barCount; i++) {
                 const magnitude = magnitudes[i];
                 const normalized = Math.max(0, (magnitude + 60) / 60);
                 const barHeight = normalized * height;
-
                 const x = i * barWidth;
-                ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
+
+                // Main bar gradient
+                const gradient = ctx.createLinearGradient(0, height, 0, height - barHeight);
+                gradient.addColorStop(0, '#38d9a9');
+                gradient.addColorStop(0.5, '#6c5ce7');
+                gradient.addColorStop(1, '#e74c3c');
+                ctx.fillStyle = gradient;
+
+                // Draw rounded bar
+                const radius = Math.min(3, barWidth / 2);
+                ctx.beginPath();
+                ctx.roundRect(x, height - barHeight, barWidth - 1, barHeight, radius);
+                ctx.fill();
+
+                // Glow effect for high energy
+                if (effects.glow && magnitude > -20) {
+                    const glowIntensity = Math.min(1, (magnitude + 20) / 40);
+                    ctx.save();
+                    ctx.shadowColor = '#38d9a9';
+                    ctx.shadowBlur = 15 * glowIntensity;
+                    ctx.fillStyle = `rgba(56, 217, 169, ${glowIntensity * 0.8})`;
+                    ctx.fillRect(x, height - barHeight, barWidth - 1, 4);
+                    ctx.restore();
+                }
+
+                // Peak hold
+                if (effects.peak) {
+                    const now = performance.now();
+                    if (magnitude > peakValues[i]) {
+                        peakValues[i] = magnitude;
+                        peakHoldTimes[i] = now;
+                    }
+
+                    const holdTime = now - peakHoldTimes[i];
+                    let displayPeak = peakValues[i];
+
+                    if (holdTime > PEAK_HOLD_DURATION) {
+                        const decayProgress = Math.min(1, (holdTime - PEAK_HOLD_DURATION) / PEAK_DECAY_TIME);
+                        displayPeak = peakValues[i] + (magnitude - peakValues[i]) * decayProgress;
+                        if (decayProgress >= 1) {
+                            peakValues[i] = magnitude;
+                        }
+                    }
+
+                    if (displayPeak > -180) {
+                        const peakNormalized = Math.max(0, (displayPeak + 60) / 60);
+                        const peakY = height - peakNormalized * height;
+
+                        ctx.save();
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowColor = '#38d9a9';
+                        ctx.shadowBlur = 8;
+                        ctx.beginPath();
+                        ctx.arc(x + (barWidth - 1) / 2, peakY, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
             }
 
+            // Center line connecting bar midpoints
+            if (effects.centerLine) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(108, 92, 231, 0.6)';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#6c5ce7';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+
+                for (let i = 0; i < barCount; i++) {
+                    const magnitude = magnitudes[i];
+                    const normalized = Math.max(0, (magnitude + 60) / 60);
+                    const barHeight = normalized * height;
+                    const y = height - barHeight / 2;
+                    const x = i * barWidth + (barWidth - 1) / 2;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // Draw grid lines
             ctx.strokeStyle = '#2a2a3a';
             ctx.lineWidth = 1;
             for (let i = 0; i < 5; i++) {
@@ -508,6 +844,7 @@
                 ctx.stroke();
             }
 
+            // Frequency labels
             ctx.fillStyle = '#666';
             ctx.font = '10px monospace';
             const labels = ['20Hz', '100Hz', '1kHz', '10kHz', '20kHz'];
@@ -517,7 +854,6 @@
             });
         }
 
-        // Update stats display
         function updateStats(data) {
             frameCountEl.textContent = data.frame || 0;
 
@@ -540,7 +876,6 @@
             drawFrame(data.magnitudes || []);
         }
 
-        // Connect to WebSocket
         function connect() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -583,6 +918,27 @@
         const savedLang = localStorage.getItem('audioflow_lang') || 'en';
         langSelect.value = savedLang;
         setLanguage(savedLang);
+
+        // Init effects from localStorage
+        const savedEffects = localStorage.getItem('audioflow_effects');
+        if (savedEffects) {
+            try {
+                effects = JSON.parse(savedEffects);
+                // Determine which preset matches
+                const presetMatch = Object.entries(effectPresets).find(([name, preset]) =>
+                    name !== 'custom' &&
+                    preset.glow === effects.glow &&
+                    preset.reflection === effects.reflection &&
+                    preset.peak === effects.peak &&
+                    preset.pulse === effects.pulse &&
+                    preset.centerLine === effects.centerLine
+                );
+                effectPreset.value = presetMatch ? presetMatch[0] : 'custom';
+            } catch (e) {
+                effects = effectPresets.default;
+            }
+        }
+        updateEffectUI();
 
         // Start
         drawFrame();
