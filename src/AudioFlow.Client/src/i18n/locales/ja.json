@@ -94,7 +94,28 @@
   "frequency": {
     "title": "周波数ラベル説明",
     "low": "低音 (20-200Hz) - ベース、キックドラム、ベースギター",
-    "mid": "中音 (200Hz-4kHz) - ボーカル、ギター、ほとんどの楽器",
+    "mid": "中音 (200Hz-4kHz) - ボーカル、ギター、ほとんど楽器",
     "high": "高音 (4kHz-20kHz) - シンバル、ハイハット、ハーモニクス"
+  },
+  "player": {
+    "upload": "アップロード",
+    "play": "再生",
+    "pause": "一時停止",
+    "stop": "停止"
+  },
+  "visualization": {
+    "mode": "モード",
+    "spectrum": "スペクトラム",
+    "waterfall": "ウォーターフォール",
+    "waveform": "波形",
+    "frames": "フレーム数",
+    "decay": "減衰",
+    "colorScheme": "カラー"
+  },
+  "colorScheme": {
+    "fire": "ファイア",
+    "aurora": "オーロラ",
+    "tech": "テック",
+    "ocean": "オーシャン"
   }
 }

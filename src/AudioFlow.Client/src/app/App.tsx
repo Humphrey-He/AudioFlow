@@ -4,6 +4,8 @@ import { ConnectionStatus } from '@/components/status/ConnectionStatus';
 import { StatsPanel } from '@/components/status/StatsPanel';
 import { DiagnosticsPanel } from '@/components/status/DiagnosticsPanel';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
+import { VisualizationSelector } from '@/components/canvas/VisualizationSelector';
+import { AudioPlayer } from '@/components/controls/AudioPlayer';
 import { ControlsPanel } from '@/components/controls/ControlsPanel';
 import { EffectsPanel } from '@/components/controls/EffectsPanel';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -23,6 +25,8 @@ export function App() {
       <Header preset={preset} onPresetChange={applyPreset} />
       <ConnectionStatus />
       <SpectrumCanvas />
+      <VisualizationSelector />
+      <AudioPlayer />
       <EffectsPanel />
       <ControlsPanel />
       <StatsPanel

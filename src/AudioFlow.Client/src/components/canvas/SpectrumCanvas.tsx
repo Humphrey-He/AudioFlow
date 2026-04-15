@@ -1,16 +1,27 @@
 import { useRef } from 'react';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useSpectrumRenderer } from './useSpectrumRenderer';
+import { usePlayerStore } from '@/stores/playerStore';
+import { useVisualizationRenderer } from './useVisualizationRenderer';
 import styles from './SpectrumCanvas.module.css';
 
 export function SpectrumCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const effects = useSettingsStore((s) => s.effects);
+  const visualizationMode = usePlayerStore((s) => s.visualizationMode);
 
-  // Renderer manages its own RAF loop, reads from audioRuntime directly
-  useSpectrumRenderer({
-    effects,
-    canvasRef,
+  // Use unified renderer for all modes
+  useVisualizationRenderer(canvasRef, {
+    mode: visualizationMode,
+    waterfall: {
+      frameCount: 80,
+      decay: 0.92,
+      colorScheme: 'fire',
+    },
+    effects: {
+      glow: false,
+      reflection: false,
+      peak: false,
+      pulse: false,
+      centerLine: false,
+    },
   });
 
   return (

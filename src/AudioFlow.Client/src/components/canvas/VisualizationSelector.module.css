@@ -1,0 +1,70 @@
+.selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.modeButton {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modeButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.modeButton.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.waterfallControls {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--color-card);
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controlLabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.controlSelect,
+.controlRange {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.controlRange {
+  width: 100px;
+  accent-color: var(--color-primary);
+}
+
+.controlValue {
+  font-size: 11px;
+  color: var(--color-primary);
+  min-width: 30px;
+}

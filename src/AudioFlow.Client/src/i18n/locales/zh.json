@@ -96,5 +96,26 @@
     "low": "低频 (20-200Hz) - 低音、底鼓、低音吉他",
     "mid": "中频 (200Hz-4kHz) - 人声、吉他、大多数乐器",
     "high": "高频 (4kHz-20kHz) - 钹帽、踩镲、泛音"
+  },
+  "player": {
+    "upload": "上传",
+    "play": "播放",
+    "pause": "暂停",
+    "stop": "停止"
+  },
+  "visualization": {
+    "mode": "模式",
+    "spectrum": "频谱",
+    "waterfall": "瀑布图",
+    "waveform": "波形",
+    "frames": "帧数",
+    "decay": "衰减",
+    "colorScheme": "配色"
+  },
+  "colorScheme": {
+    "fire": "火焰",
+    "aurora": "极光",
+    "tech": "科技",
+    "ocean": "海洋"
   }
 }

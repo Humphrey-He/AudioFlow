@@ -96,5 +96,26 @@
     "low": "Low (20-200Hz) - Bass, kick drums, bass guitars",
     "mid": "Mid (200Hz-4kHz) - Vocals, guitars, most instruments",
     "high": "High (4kHz-20kHz) - Cymbals, hi-hats, harmonics"
+  },
+  "player": {
+    "upload": "Upload",
+    "play": "Play",
+    "pause": "Pause",
+    "stop": "Stop"
+  },
+  "visualization": {
+    "mode": "Mode",
+    "spectrum": "Spectrum",
+    "waterfall": "Waterfall",
+    "waveform": "Waveform",
+    "frames": "Frames",
+    "decay": "Decay",
+    "colorScheme": "Color"
+  },
+  "colorScheme": {
+    "fire": "Fire",
+    "aurora": "Aurora",
+    "tech": "Tech",
+    "ocean": "Ocean"
   }
 }
