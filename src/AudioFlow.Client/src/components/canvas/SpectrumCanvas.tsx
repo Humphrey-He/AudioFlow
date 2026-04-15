@@ -6,22 +6,13 @@ import styles from './SpectrumCanvas.module.css';
 export function SpectrumCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visualizationMode = usePlayerStore((s) => s.visualizationMode);
+  const waterfallConfig = usePlayerStore((s) => s.waterfallConfig);
+  const effects = usePlayerStore((s) => s); // For effects when in spectrum mode
 
   // Use unified renderer for all modes
   useVisualizationRenderer(canvasRef, {
     mode: visualizationMode,
-    waterfall: {
-      frameCount: 80,
-      decay: 0.92,
-      colorScheme: 'fire',
-    },
-    effects: {
-      glow: false,
-      reflection: false,
-      peak: false,
-      pulse: false,
-      centerLine: false,
-    },
+    waterfall: waterfallConfig,
   });
 
   return (

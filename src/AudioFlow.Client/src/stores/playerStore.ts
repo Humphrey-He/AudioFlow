@@ -1,6 +1,14 @@
 import { create } from 'zustand';
 import type { VisualizationMode } from '@/types/visualization';
 
+export type ColorScheme = 'fire' | 'aurora' | 'tech' | 'ocean';
+
+export interface WaterfallConfig {
+  frameCount: number;
+  decay: number;
+  colorScheme: ColorScheme;
+}
+
 interface PlayerState {
   // Playback state
   isPlaying: boolean;
@@ -14,6 +22,7 @@ interface PlayerState {
 
   // Visualization
   visualizationMode: VisualizationMode;
+  waterfallConfig: WaterfallConfig;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -23,6 +32,7 @@ interface PlayerState {
   setVolume: (volume: number) => void;
   setSource: (source: 'system' | 'microphone' | 'file') => void;
   setVisualizationMode: (mode: VisualizationMode) => void;
+  updateWaterfallConfig: (config: Partial<WaterfallConfig>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -33,6 +43,11 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   volume: 0.8,
   source: 'system',
   visualizationMode: 'spectrum',
+  waterfallConfig: {
+    frameCount: 80,
+    decay: 0.92,
+    colorScheme: 'fire',
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -41,4 +56,8 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setVolume: (volume) => set({ volume }),
   setSource: (source) => set({ source }),
   setVisualizationMode: (mode) => set({ visualizationMode: mode }),
+  updateWaterfallConfig: (config) =>
+    set((state) => ({
+      waterfallConfig: { ...state.waterfallConfig, ...config },
+    })),
 }));

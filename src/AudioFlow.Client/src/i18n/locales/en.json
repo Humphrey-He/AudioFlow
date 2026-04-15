@@ -117,5 +117,11 @@
     "aurora": "Aurora",
     "tech": "Tech",
     "ocean": "Ocean"
+  },
+  "screenshot": {
+    "capture": "Capture Screenshot",
+    "preview": "Screenshot Preview",
+    "download": "Download",
+    "copy": "Copy to Clipboard"
   }
 }

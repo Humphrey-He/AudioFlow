@@ -117,5 +117,11 @@
     "aurora": "极光",
     "tech": "科技",
     "ocean": "海洋"
+  },
+  "screenshot": {
+    "capture": "截图",
+    "preview": "截图预览",
+    "download": "下载",
+    "copy": "复制到剪贴板"
   }
 }

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUiStore } from '@/stores/uiStore';
 import { HelpPanel } from './HelpPanel';
+import { ScreenshotButton } from '../controls/ScreenshotButton';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -26,6 +27,7 @@ export function Header({ preset, onPresetChange }: HeaderProps) {
         <span className={styles.subtitle}>{t('app.subtitle')}</span>
       </div>
       <div className={styles.headerRight}>
+        <ScreenshotButton />
         <HelpPanel />
         <select
           className={styles.select}

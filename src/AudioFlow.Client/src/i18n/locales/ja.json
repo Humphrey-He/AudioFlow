@@ -117,5 +117,11 @@
     "aurora": "オーロラ",
     "tech": "テック",
     "ocean": "オーシャン"
+  },
+  "screenshot": {
+    "capture": "スクリーンショット",
+    "preview": "プレビュー",
+    "download": "ダウンロード",
+    "copy": "クリップボードにコピー"
   }
 }

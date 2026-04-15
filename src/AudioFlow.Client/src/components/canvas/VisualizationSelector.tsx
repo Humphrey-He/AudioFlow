@@ -1,18 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { usePlayerStore } from '@/stores/playerStore';
+import { usePlayerStore, type ColorScheme } from '@/stores/playerStore';
 import type { VisualizationMode } from '@/types/visualization';
 import { colorSchemes } from '@/types/visualization';
 import styles from './VisualizationSelector.module.css';
 
-interface WaterfallConfig {
-  frameCount: number;
-  decay: number;
-  colorScheme: 'fire' | 'aurora' | 'tech' | 'ocean';
-}
-
 export function VisualizationSelector() {
   const { t } = useTranslation();
-  const { visualizationMode, setVisualizationMode } = usePlayerStore();
+  const visualizationMode = usePlayerStore((s) => s.visualizationMode);
+  const setVisualizationMode = usePlayerStore((s) => s.setVisualizationMode);
 
   const modes: { key: VisualizationMode; label: string }[] = [
     { key: 'spectrum', label: t('visualization.spectrum') },
@@ -41,13 +36,10 @@ export function VisualizationSelector() {
 
 function WaterfallControls() {
   const { t } = useTranslation();
-  const { visualizationMode } = usePlayerStore();
+  const waterfallConfig = usePlayerStore((s) => s.waterfallConfig);
+  const updateWaterfallConfig = usePlayerStore((s) => s.updateWaterfallConfig);
 
-  const config = visualizationMode === 'waterfall'
-    ? { frameCount: 80, decay: 0.92, colorScheme: 'fire' as const }
-    : { frameCount: 80, decay: 0.92, colorScheme: 'fire' as const };
-
-  const colorOptions = Object.keys(colorSchemes) as Array<keyof typeof colorSchemes>;
+  const colorOptions = Object.keys(colorSchemes) as ColorScheme[];
 
   return (
     <div className={styles.waterfallControls}>
@@ -58,10 +50,10 @@ function WaterfallControls() {
           className={styles.controlRange}
           min="30"
           max="150"
-          value={config.frameCount}
-          onChange={() => {}}
+          value={waterfallConfig.frameCount}
+          onChange={(e) => updateWaterfallConfig({ frameCount: parseInt(e.target.value) })}
         />
-        <span className={styles.controlValue}>{config.frameCount}</span>
+        <span className={styles.controlValue}>{waterfallConfig.frameCount}</span>
       </div>
 
       <div className={styles.controlGroup}>
@@ -72,15 +64,19 @@ function WaterfallControls() {
           min="0.8"
           max="0.99"
           step="0.01"
-          value={config.decay}
-          onChange={() => {}}
+          value={waterfallConfig.decay}
+          onChange={(e) => updateWaterfallConfig({ decay: parseFloat(e.target.value) })}
         />
-        <span className={styles.controlValue}>{config.decay.toFixed(2)}</span>
+        <span className={styles.controlValue}>{waterfallConfig.decay.toFixed(2)}</span>
       </div>
 
       <div className={styles.controlGroup}>
         <span className={styles.controlLabel}>{t('visualization.colorScheme')}</span>
-        <select className={styles.controlSelect}>
+        <select
+          className={styles.controlSelect}
+          value={waterfallConfig.colorScheme}
+          onChange={(e) => updateWaterfallConfig({ colorScheme: e.target.value as ColorScheme })}
+        >
           {colorOptions.map((key) => (
             <option key={key} value={key}>
               {t(`colorScheme.${key}`)}

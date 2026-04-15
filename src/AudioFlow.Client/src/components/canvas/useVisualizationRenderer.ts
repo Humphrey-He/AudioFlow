@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { usePlayerStore } from '@/stores/playerStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { audioRuntime } from '@/services/audio/audioRuntime';
 import { audioPlayer } from '@/services/audio/audioPlayer';
@@ -12,13 +11,6 @@ interface RendererConfig {
     decay: number;
     colorScheme: 'fire' | 'aurora' | 'tech' | 'ocean';
   };
-  effects: {
-    glow: boolean;
-    reflection: boolean;
-    peak: boolean;
-    pulse: boolean;
-    centerLine: boolean;
-  };
 }
 
 /**
@@ -29,7 +21,7 @@ export function useVisualizationRenderer(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   config: RendererConfig
 ) {
-  const { mode } = config;
+  const { mode, waterfall: waterfallConfig } = config;
   const effects = useSettingsStore((s) => s.effects);
 
   // Refs for rendering state
@@ -41,7 +33,6 @@ export function useVisualizationRenderer(
 
   // Waterfall-specific state
   const waterfallHistoryRef = useRef<number[][]>([]);
-  const waterfallImageDataRef = useRef<ImageData | null>(null);
 
   const renderSpectrum = useCallback(
     (ctx: CanvasRenderingContext2D, magnitudes: number[], width: number, height: number) => {
@@ -200,7 +191,7 @@ export function useVisualizationRenderer(
 
   const renderWaterfall = useCallback(
     (ctx: CanvasRenderingContext2D, magnitudes: number[], width: number, height: number) => {
-      const { frameCount, decay, colorScheme } = config.waterfall;
+      const { frameCount, decay, colorScheme } = waterfallConfig;
       const scheme = colorSchemes[colorScheme];
       const mags = magnitudes;
 
@@ -268,12 +259,11 @@ export function useVisualizationRenderer(
       ctx.font = '9px monospace';
       ctx.fillText(`${frameCount}f history`, 5, 15);
     },
-    [config.waterfall]
+    [waterfallConfig]
   );
 
   const renderWaveform = useCallback(
     (ctx: CanvasRenderingContext2D, timeData: Uint8Array, width: number, height: number) => {
-      // Get time domain data from audio player
       const data = timeData;
 
       // Background
