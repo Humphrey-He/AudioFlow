@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Platform;
-using Avalonia.Rendering;
 using Avalonia.Threading;
 using AudioFlow.Audio.Buffering;
 using AudioFlow.Audio.Providers;
@@ -41,6 +39,7 @@ public sealed class SpectrumView : Control
     private float[] _magnitudes = Array.Empty<float>();
     private float[] _phases = Array.Empty<float>();
     private SpectrumFrame _frame = new(Array.Empty<float>(), Array.Empty<float>(), 48000, DateTime.UtcNow);
+    private Image? _image;
 
     public SpectrumView()
     {
@@ -58,14 +57,68 @@ public sealed class SpectrumView : Control
         _visualizerHost.Add(primary);
         _visualizerHost.Add(inset);
 
+        _image = new Image();
+
         AttachedToVisualTree += OnAttachedToVisualTree;
         DetachedFromVisualTree += OnDetachedFromVisualTree;
     }
 
+    static SpectrumView()
+    {
+        AffectsRender<SpectrumView>(BoundsProperty);
+    }
+
     public override void Render(DrawingContext context)
     {
-        var bounds = Bounds;
-        context.Custom(new SpectrumDrawOp(bounds, _visualizerHost, _renderEngine, _pipLayout, _frame, _stopwatch.Elapsed, this));
+        // Draw black background
+        context.FillRectangle(Brushes.Black, new Rect(0, 0, Bounds.Width, Bounds.Height));
+
+        // Render visualization
+        var width = Math.Max(1, (int)Bounds.Width);
+        var height = Math.Max(1, (int)Bounds.Height);
+
+        if (width > 0 && height > 0)
+        {
+            using var bitmap = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            using var surface = SKSurface.Create(bitmap.Info, bitmap.GetPixels());
+            if (surface != null)
+            {
+                var canvas = surface.Canvas;
+                canvas.Clear(SKColor.Parse("#08080A"));
+
+                var renderContext = new VisualizerRenderContext(new SKRect(0, 0, width, height));
+                if (_visualizerHost.Visualizers.Count > 1)
+                {
+                    _visualizerHost.RenderPictureInPicture(canvas, _frame, renderContext, _pipLayout);
+                }
+                else
+                {
+                    _visualizerHost.RenderAll(canvas, _frame, renderContext);
+                }
+
+                // Draw time overlay
+                using var textPaint = new SKPaint
+                {
+                    Color = SKColors.White,
+                    TextSize = 14f,
+                    IsAntialias = true
+                };
+                canvas.DrawText($"AudioFlow · {_stopwatch.Elapsed:mm\\:ss}", 12f, 22f, textPaint);
+
+                // Convert to Avalonia bitmap and draw
+                using var pixmap = bitmap.PeekPixels();
+                if (pixmap != null)
+                {
+                    using var imageData = pixmap.Encode(SKEncodedImageFormat.Png, 100);
+                    using var stream = new System.IO.MemoryStream();
+                    imageData.SaveTo(stream);
+                    stream.Position = 0;
+
+                    var avaloniaBitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+                    context.DrawImage(avaloniaBitmap, new Rect(0, 0, width, height));
+                }
+            }
+        }
     }
 
     private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -139,80 +192,5 @@ public sealed class SpectrumView : Control
         Array.Copy(result.Magnitudes, _magnitudes, result.Magnitudes.Length);
         Array.Copy(result.Phases, _phases, result.Phases.Length);
         _frame = new SpectrumFrame(_magnitudes, _phases, result.SampleRate, result.TimestampUtc);
-    }
-
-    private sealed class SpectrumDrawOp : ICustomDrawOperation
-    {
-        private static readonly SKPaint TextPaint = new()
-        {
-            Color = SKColors.White,
-            TextSize = 14f,
-            IsAntialias = true
-        };
-
-        private readonly Rect _bounds;
-        private readonly VisualizerHost _host;
-        private readonly RenderEngine _renderEngine;
-        private readonly PictureInPictureLayout _pipLayout;
-        private readonly SpectrumFrame _frame;
-        private readonly TimeSpan _elapsed;
-        private readonly Visual _visual;
-
-        public SpectrumDrawOp(Rect bounds, VisualizerHost host, RenderEngine renderEngine, PictureInPictureLayout pipLayout,
-            SpectrumFrame frame, TimeSpan elapsed, Visual visual)
-        {
-            _bounds = bounds;
-            _host = host;
-            _renderEngine = renderEngine;
-            _pipLayout = pipLayout;
-            _frame = frame;
-            _elapsed = elapsed;
-            _visual = visual;
-        }
-
-        public Rect Bounds => _bounds;
-
-        public void Dispose()
-        {
-        }
-
-        public bool HitTest(Point p) => false;
-
-        public bool Equals(ICustomDrawOperation? other) => false;
-
-        public void Render(ImmediateDrawingContext context)
-        {
-            var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
-            if (leaseFeature == null)
-            {
-                return;
-            }
-
-            using var lease = leaseFeature.Lease();
-            var canvas = lease.SkCanvas;
-
-            var width = Math.Max(1, (int)_bounds.Width);
-            var height = Math.Max(1, (int)_bounds.Height);
-            var scale = (float)(_visual.VisualRoot?.RenderScaling ?? 1.0);
-
-            var frameCanvas = _renderEngine.BeginFrame(width, height, scale);
-            frameCanvas.Clear(_renderEngine.Settings.BackgroundColor);
-
-            var renderContext = new VisualizerRenderContext(new SKRect(0, 0, width * scale, height * scale));
-            if (_host.Visualizers.Count > 1)
-            {
-                _host.RenderPictureInPicture(frameCanvas, _frame, renderContext, _pipLayout);
-            }
-            else
-            {
-                _host.RenderAll(frameCanvas, _frame, renderContext);
-            }
-
-            using var frame = _renderEngine.EndFrame();
-            var dest = new SKRect(0, 0, width, height);
-            canvas.DrawImage(frame.Image, dest);
-
-            canvas.DrawText($"AudioFlow Spectrum · {_elapsed:mm\\:ss}", 12f, 22f, TextPaint);
-        }
     }
 }
