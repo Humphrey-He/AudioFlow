@@ -1,21 +1,26 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { audioRuntime } from '@/services/audio/audioRuntime';
 import type { EffectsState } from '@/stores/settingsStore';
 
 interface RendererOptions {
-  magnitudes: Float32Array;
   effects: EffectsState;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }
 
-const PEAK_HOLD_DURATION = 1500;
-const PEAK_DECAY_TIME = 500;
-
-export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: RendererOptions) {
+/**
+ * useSpectrumRenderer - manages Canvas rendering loop
+ *
+ * Key principle (Phase 2):
+ * - Renderer reads directly from audioRuntime via RAF
+ * - Does NOT go through React state
+ * - Returns FPS via ref for external polling
+ */
+export function useSpectrumRenderer({ effects, canvasRef }: RendererOptions) {
   const peakValuesRef = useRef<number[]>(new Array(512).fill(-180));
   const peakHoldTimesRef = useRef<number[]>(new Array(512).fill(0));
   const lowFreqEnergyRef = useRef(0);
   const pulsePhaseRef = useRef(0);
-  const fpsCounterRef = useRef({ count: 0, lastTime: performance.now(), fps: 0 });
+  const fpsRef = useRef(0);
 
   const drawFrame = useCallback(() => {
     const canvas = canvasRef.current;
@@ -24,20 +29,25 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Read directly from runtime (no React state involved)
+    const snapshot = audioRuntime.getSnapshot();
+    const mags = Array.from(snapshot.magnitudes);
+    const version = snapshot.version;
+
+    // FPS calculation
+    const now = performance.now();
+    fpsRef.current.count = (fpsRef.current.count || 0) + 1;
+    fpsRef.current.lastTime = fpsRef.current.lastTime || now;
+    if (now - fpsRef.current.lastTime >= 1000) {
+      fpsRef.current.fps = Math.round(
+        (fpsRef.current.count * 1000) / (now - fpsRef.current.lastTime)
+      );
+      fpsRef.current.count = 0;
+      fpsRef.current.lastTime = now;
+    }
+
     const width = canvas.width;
     const height = canvas.height;
-    const mags = Array.from(magnitudes);
-
-    // FPS counter
-    const now = performance.now();
-    fpsCounterRef.current.count++;
-    if (now - fpsCounterRef.current.lastTime >= 1000) {
-      fpsCounterRef.current.fps = Math.round(
-        (fpsCounterRef.current.count * 1000) / (now - fpsCounterRef.current.lastTime)
-      );
-      fpsCounterRef.current.count = 0;
-      fpsCounterRef.current.lastTime = now;
-    }
 
     // Background pulse
     if (effects.pulse && mags.length > 0) {
@@ -59,7 +69,7 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
       ctx.fillRect(0, 0, width, height);
     }
 
-    if (mags.length === 0 || mags.every((m) => m === 0)) {
+    if (mags.length === 0 || (version === 0 && mags.every((m) => m === 0))) {
       // Draw placeholder bars
       ctx.fillStyle = '#2a2a3a';
       for (let i = 0; i < 60; i++) {
@@ -132,8 +142,8 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
         const holdTime = currentTime - peakHoldTimesRef.current[i];
         let displayPeak = peakValuesRef.current[i];
 
-        if (holdTime > PEAK_HOLD_DURATION) {
-          const decayProgress = Math.min(1, (holdTime - PEAK_HOLD_DURATION) / PEAK_DECAY_TIME);
+        if (holdTime > 1500) {
+          const decayProgress = Math.min(1, (holdTime - 1500) / 500);
           displayPeak = peakValuesRef.current[i] + (magnitude - peakValuesRef.current[i]) * decayProgress;
           if (decayProgress >= 1) {
             peakValuesRef.current[i] = magnitude;
@@ -200,10 +210,11 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
       const x = (width / 4) * i;
       ctx.fillText(label, x, height - 5);
     });
-  }, [magnitudes, effects, canvasRef]);
+  }, [effects, canvasRef]);
 
   useEffect(() => {
     let animationId: number;
+    let lastVersion = -1;
 
     const resizeCanvas = () => {
       const canvas = canvasRef.current;
@@ -212,6 +223,9 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
       if (rect) {
         canvas.width = rect.width - 60;
         canvas.height = 300;
+        // Reset peak tracking on resize
+        peakValuesRef.current = new Array(512).fill(-180);
+        peakHoldTimesRef.current = new Array(512).fill(0);
       }
     };
 
@@ -219,7 +233,11 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
     window.addEventListener('resize', resizeCanvas);
 
     const render = () => {
-      drawFrame();
+      const currentVersion = audioRuntime.getVersion();
+      if (currentVersion !== lastVersion) {
+        lastVersion = currentVersion;
+        drawFrame();
+      }
       animationId = requestAnimationFrame(render);
     };
     render();
@@ -230,5 +248,8 @@ export function useSpectrumRenderer({ magnitudes, effects, canvasRef }: Renderer
     };
   }, [drawFrame, canvasRef]);
 
-  return { fps: fpsCounterRef.current.fps };
+  return {
+    fps: fpsRef.current.fps,
+    fpsRef,
+  };
 }

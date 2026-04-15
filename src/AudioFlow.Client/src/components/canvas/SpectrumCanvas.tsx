@@ -2,17 +2,13 @@ import { useRef } from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useSpectrumRenderer } from './useSpectrumRenderer';
 import styles from './SpectrumCanvas.module.css';
-import type { AudioSnapshot } from '@/hooks/useAudioRuntime';
 
-interface SpectrumCanvasProps {
-  audio: AudioSnapshot;
-}
-
-export function SpectrumCanvas({ audio }: SpectrumCanvasProps) {
+export function SpectrumCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const effects = useSettingsStore((s) => s.effects);
-  const { fps } = useSpectrumRenderer({
-    magnitudes: audio.magnitudes,
+
+  // Renderer manages its own RAF loop, reads from audioRuntime directly
+  useSpectrumRenderer({
     effects,
     canvasRef,
   });

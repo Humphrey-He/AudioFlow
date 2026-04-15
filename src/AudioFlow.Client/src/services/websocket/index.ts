@@ -1,3 +1,4 @@
 export { websocketService } from './websocketService';
-export { mockWebsocketService } from './websocket.mock';
-export type { WebSocketService } from './websocket.types';
+export type { WebSocketService, ConnectionDiagnostics } from './websocketService';
+export type { IncomingMessage, OutgoingSettings, SpectrumFrame } from './protocol';
+export { validateMessage, createSettingsMessage } from './protocol';

@@ -1,47 +1,63 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { audioRuntime } from '@/services/audio/audioRuntime';
+import { useEffect, useState, useCallback } from 'react';
+import { audioRuntime, type AudioStats } from '@/services/audio/audioRuntime';
 import { websocketService } from '@/services/websocket/websocketService';
 import { useConnectionStore } from '@/stores/connectionStore';
-import type { SpectrumFrame } from '@/types/common';
+import { useUiStore } from '@/stores/uiStore';
+import type { IncomingMessage } from '@/services/websocket/protocol';
 
-export interface AudioSnapshot {
-  magnitudes: Float32Array;
-  frameCount: number;
-  peakDb: number;
-  avgDb: number;
-  timestamp: string;
-}
-
-export function useAudioRuntime(): AudioSnapshot {
-  const [snapshot, setSnapshot] = useState<AudioSnapshot>(() => audioRuntime.getSnapshot());
+/**
+ * useAudioRuntime - connects WebSocket to AudioRuntime
+ *
+ * Key principle (Phase 2):
+ * - This hook ONLY handles connection setup
+ * - It does NOT return magnitudes (that goes directly to renderer via RAF)
+ * - React state only updates for UI-relevant events (stats, connection)
+ */
+export function useAudioRuntime(): AudioStats {
+  const [stats, setStats] = useState<AudioStats>(() => audioRuntime.getSnapshot().stats);
   const setConnectionStatus = useConnectionStore((s) => s.setStatus);
+  const setError = useUiStore((s) => s.setError);
 
   useEffect(() => {
-    const unsubscribeMessage = websocketService.subscribe('message', (data) => {
-      if (data && typeof data === 'object' && 'magnitudes' in data) {
-        audioRuntime.updateFrame(data as SpectrumFrame);
+    // Handle incoming messages - only update stats for UI
+    const unsubscribeMessage = websocketService.subscribe('message', (data: IncomingMessage) => {
+      if (data.type === 'spectrum_frame') {
+        // Update stats for UI components (StatsPanel)
+        // But magnitudes go directly to runtime for renderer
+        const snapshot = audioRuntime.getSnapshot();
+        setStats({ ...snapshot.stats });
+      } else if (data.type === 'error') {
+        setError(data.message);
       }
     });
 
-    const unsubscribeStatus = websocketService.subscribe('status', (data) => {
-      if (typeof data === 'string') {
-        setConnectionStatus(data as 'connected' | 'disconnected' | 'error');
+    // Handle connection status changes
+    const unsubscribeStatus = websocketService.subscribe('status', (status) => {
+      if (typeof status === 'string') {
+        setConnectionStatus(status as 'connected' | 'disconnected' | 'reconnecting' | 'error');
+        if (status === 'disconnected') {
+          audioRuntime.reset();
+        }
       }
     });
 
-    const unsubscribeRuntime = audioRuntime.subscribe(() => {
-      setSnapshot(audioRuntime.getSnapshot());
-    });
-
+    // Connect to WebSocket
     websocketService.connect();
 
     return () => {
       unsubscribeMessage();
       unsubscribeStatus();
-      unsubscribeRuntime();
       websocketService.disconnect();
     };
-  }, [setConnectionStatus]);
+  }, [setConnectionStatus, setError]);
 
-  return snapshot;
+  return stats;
+}
+
+/**
+ * useRendererData - for renderer hook to get latest frame without React re-render
+ * This returns a stable reference that renderer reads via RAF
+ */
+export function useRendererData() {
+  return audioRuntime.getSnapshot();
 }

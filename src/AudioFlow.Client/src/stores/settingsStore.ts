@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { AudioSettings } from '@/types/common';
+import { settingsSyncController } from '@/services/audio/settingsSyncController';
 
 interface EffectsState {
   glow: boolean;
@@ -33,7 +34,7 @@ const presets: Record<string, EffectsState> = {
   minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false },
 };
 
-export const useSettingsStore = create<SettingsState>((set) => ({
+export const useSettingsStore = create<SettingsState>((set, get) => ({
   audio: {
     smoothing: 'gravity',
     attack: 0.6,
@@ -42,10 +43,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   },
   effects: { ...defaultEffects },
   preset: 'default',
-  updateAudioSetting: (key, value) =>
-    set((state) => ({
-      audio: { ...state.audio, [key]: value },
-    })),
+  updateAudioSetting: (key, value) => {
+    const newAudio = { ...get().audio, [key]: value };
+    set({ audio: newAudio });
+    // Sync to server via controller
+    settingsSyncController.applySettings(newAudio);
+  },
   updateEffect: (key, value) =>
     set((state) => ({
       effects: { ...state.effects, [key]: value },

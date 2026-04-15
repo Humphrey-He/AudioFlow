@@ -1,35 +1,46 @@
-import type { ConnectionStatus, SpectrumFrame } from '@/types/common';
+import type { ConnectionStatus } from '@/types/common';
 import type { WebSocketService } from './websocket.types';
-import { MockWebSocketService } from './websocket.mock';
+import { validateMessage, type IncomingMessage } from './protocol';
 
-type Listener = (data: SpectrumFrame | ConnectionStatus | string) => void;
+type Listener = (data: IncomingMessage | ConnectionStatus) => void;
 
-const USE_MOCK = true; // Toggle for development
+const HEARTBEAT_INTERVAL = 30000;
+const RECONNECT_BASE_DELAY = 1000;
+const RECONNECT_MAX_DELAY = 30000;
+const MAX_RECONNECT_ATTEMPTS = 10;
+
+export interface ConnectionDiagnostics {
+  totalMessages: number;
+  invalidMessages: number;
+  lastMessageTime: number | null;
+  reconnectAttempts: number;
+  lastError: string | null;
+}
 
 export class WebSocketServiceImpl implements WebSocketService {
   private ws: WebSocket | null = null;
   private listeners: Map<string, Set<Listener>> = new Map();
   private status: ConnectionStatus = 'disconnected';
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private url: string = '';
-  private mockService: MockWebSocketService | null = null;
+  private reconnectAttempts: number = 0;
+  private currentDelay: number = RECONNECT_BASE_DELAY;
+  private isIntentionallyClosed: boolean = false;
+
+  // Diagnostics
+  public diagnostics: ConnectionDiagnostics = {
+    totalMessages: 0,
+    invalidMessages: 0,
+    lastMessageTime: null,
+    reconnectAttempts: 0,
+    lastError: null,
+  };
 
   connect(url?: string): void {
-    if (USE_MOCK) {
-      this.mockService = new MockWebSocketService();
-      const listeners: Record<string, Set<Listener>> = this.listeners as Record<string, Set<Listener>>;
-      this.mockService.subscribe('message', (data) => {
-        listeners['message']?.forEach((l) => l(data as SpectrumFrame));
-      });
-      this.mockService.subscribe('status', (data) => {
-        listeners['status']?.forEach((l) => l(data as ConnectionStatus));
-      });
-      this.mockService.connect();
-      return;
-    }
-
     this.url = url || this.buildWsUrl();
     this.cleanup();
+    this.isIntentionallyClosed = false;
     this.setStatus('connecting');
 
     try {
@@ -37,36 +48,57 @@ export class WebSocketServiceImpl implements WebSocketService {
 
       this.ws.onopen = () => {
         this.setStatus('connected');
+        this.reconnectAttempts = 0;
+        this.currentDelay = RECONNECT_BASE_DELAY;
+        this.startHeartbeat();
       };
 
       this.ws.onmessage = (event) => {
+        this.diagnostics.totalMessages++;
+        this.diagnostics.lastMessageTime = Date.now();
+
         try {
-          const data = JSON.parse(event.data) as SpectrumFrame;
-          this.emit('message', data);
+          const raw = JSON.parse(event.data);
+          const message = validateMessage(raw);
+
+          if (!message) {
+            this.diagnostics.invalidMessages++;
+            this.diagnostics.lastError = 'Invalid message format';
+            console.warn('[WS] Invalid message rejected:', raw);
+            return;
+          }
+
+          this.emit('message', message);
         } catch {
-          console.error('Failed to parse WebSocket message');
+          this.diagnostics.invalidMessages++;
+          this.diagnostics.lastError = 'JSON parse error';
+          console.warn('[WS] Failed to parse message');
         }
       };
 
       this.ws.onclose = () => {
-        this.setStatus('disconnected');
-        this.scheduleReconnect();
+        this.stopHeartbeat();
+        if (this.isIntentionallyClosed) {
+          this.setStatus('disconnected');
+        } else {
+          this.setStatus('disconnected');
+          this.scheduleReconnect();
+        }
       };
 
       this.ws.onerror = () => {
+        this.diagnostics.lastError = 'WebSocket error';
         this.setStatus('error');
       };
-    } catch {
+    } catch (err) {
+      this.diagnostics.lastError = String(err);
       this.setStatus('error');
       this.scheduleReconnect();
     }
   }
 
   disconnect(): void {
-    if (this.mockService) {
-      this.mockService.disconnect();
-      this.mockService = null;
-    }
+    this.isIntentionallyClosed = true;
     this.cleanup();
     this.setStatus('disconnected');
   }
@@ -92,26 +124,57 @@ export class WebSocketServiceImpl implements WebSocketService {
     return this.status;
   }
 
+  getDiagnostics(): ConnectionDiagnostics {
+    return { ...this.diagnostics };
+  }
+
   private setStatus(status: ConnectionStatus): void {
     this.status = status;
     this.emit('status', status);
   }
 
-  private emit(event: string, data: SpectrumFrame | ConnectionStatus | string): void {
+  private emit(event: string, data: IncomingMessage | ConnectionStatus): void {
     this.listeners.get(event)?.forEach((listener) => listener(data));
   }
 
   private scheduleReconnect(): void {
-    if (this.reconnectTimer) return;
+    if (this.reconnectTimer || this.isIntentionallyClosed) return;
+    if (this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+      this.diagnostics.lastError = 'Max reconnect attempts reached';
+      this.setStatus('error');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    this.diagnostics.reconnectAttempts = this.reconnectAttempts;
+    this.setStatus('reconnecting');
+
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
-      if (this.status !== 'connected') {
-        this.connect(this.url);
+      this.connect(this.url);
+      // Exponential backoff
+      this.currentDelay = Math.min(this.currentDelay * 2, RECONNECT_MAX_DELAY);
+    }, this.currentDelay);
+  }
+
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      if (this.ws?.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: 'ping' }));
       }
-    }, 2000);
+    }, HEARTBEAT_INTERVAL);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
+    }
   }
 
   private cleanup(): void {
+    this.stopHeartbeat();
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;

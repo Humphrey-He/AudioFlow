@@ -1,4 +1,5 @@
-import type { ConnectionStatus, SpectrumFrame } from '@/types/common';
+import type { ConnectionStatus } from '@/types/common';
+import type { IncomingMessage } from './protocol';
 
 export interface WebSocketService {
   connect(): void;
@@ -6,7 +7,7 @@ export interface WebSocketService {
   send(data: unknown): void;
   subscribe(
     event: 'message' | 'status' | 'error',
-    listener: (data: SpectrumFrame | ConnectionStatus | string) => void
+    listener: (data: IncomingMessage | ConnectionStatus | string) => void
   ): () => void;
   getStatus(): ConnectionStatus;
 }
