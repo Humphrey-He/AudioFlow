@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using AudioFlow.Dsp.Windowing;
 
 namespace AudioFlow.Dsp.Analysis;
@@ -33,6 +33,9 @@ public sealed class SpectrumAnalyzer
         _windowBuffer = new float[_fftSize];
     }
 
+    public int FftSize => _fftSize;
+    public int PaddedSize => _paddedSize;
+
     public SpectrumResult Analyze(ReadOnlySpan<float> samples, int sampleRate)
     {
         if (samples.Length < _fftSize)
@@ -57,7 +60,10 @@ public sealed class SpectrumAnalyzer
         for (var i = 0; i < bins; i++)
         {
             var value = _fftBuffer[i];
-            magnitudes[i] = (float)value.Magnitude;
+            var magnitude = (float)value.Magnitude;
+            // Convert linear magnitude to dB scale (20 * log10)
+            // Floor at -180dB (below human hearing threshold)
+            magnitudes[i] = magnitude > 1e-9f ? 20f * MathF.Log10(magnitude) : -180f;
             if (_includePhase)
             {
                 phases[i] = (float)Math.Atan2(value.Imaginary, value.Real);

@@ -29,7 +29,7 @@ public sealed class SpectrumProcessor
 
         if (_logScale)
         {
-            LogFrequencyScale.ApplyInPlace(result.Magnitudes);
+            LogFrequencyScale.ApplyInPlace(result.Magnitudes, result.SampleRate, _analyzer.FftSize);
         }
 
         if (_previous.Length != result.Magnitudes.Length)
