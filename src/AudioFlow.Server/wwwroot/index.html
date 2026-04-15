@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioFlow - Spectrum Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #2a2a3a;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #38d9a9, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #666;
+        }
+
+        .status-dot.connected {
+            background: #38d9a9;
+            box-shadow: 0 0 10px #38d9a9;
+        }
+
+        .status-dot.disconnected {
+            background: #e74c3c;
+        }
+
+        .visualizer-container {
+            margin-top: 30px;
+            background: #12121a;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .spectrum-canvas {
+            width: 100%;
+            height: 300px;
+            background: #0a0a0f;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="range"] {
+            background: #1a1a2e;
+            border: 1px solid #2a2a3a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        select:hover, input[type="range"]:hover {
+            border-color: #38d9a9;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            accent-color: #38d9a9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #2a2a3a;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #38d9a9;
+            margin-top: 4px;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .visualizer-container {
+                padding: 15px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AudioFlow</h1>
+            <div class="status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </header>
+
+        <div class="visualizer-container">
+            <canvas id="spectrumCanvas" class="spectrum-canvas"></canvas>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Smoothing</label>
+                    <select id="smoothingSelect">
+                        <option value="gravity">Gravity (Attack/Decay)</option>
+                        <option value="lerp">Linear Interpolation</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Attack Rate</label>
+                    <input type="range" id="attackRange" min="0.1" max="1.0" step="0.1" value="0.6">
+                </div>
+                <div class="control-group">
+                    <label>Decay Rate</label>
+                    <input type="range" id="decayRange" min="0.1" max="1.0" step="0.1" value="0.2">
+                </div>
+                <div class="control-group">
+                    <label>Weighting</label>
+                    <select id="weightingSelect">
+                        <option value="A">A-Weighting</option>
+                        <option value="C">C-Weighting</option>
+                        <option value="Linear">Linear</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Frame</div>
+                    <div class="stat-value" id="frameCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Peak dB</div>
+                    <div class="stat-value" id="peakDb">-∞</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg dB</div>
+                    <div class="stat-value" id="avgDb">-∞</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">FPS</div>
+                    <div class="stat-value" id="fps">0</div>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                Unable to connect to AudioFlow server. Please ensure the backend is running.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('spectrumCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const frameCountEl = document.getElementById('frameCount');
+        const peakDbEl = document.getElementById('peakDb');
+        const avgDbEl = document.getElementById('avgDb');
+        const fpsEl = document.getElementById('fps');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let ws = null;
+        let animationId = null;
+        let lastFrameTime = performance.now();
+        let frameCount = 0;
+        let fps = 0;
+
+        // Resize canvas to match container
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width - 60; // Account for padding
+            canvas.height = 300;
+            drawFrame();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Draw spectrum frame
+        function drawFrame(magnitudes = []) {
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, width, height);
+
+            if (magnitudes.length === 0) {
+                // Draw placeholder bars
+                ctx.fillStyle = '#2a2a3a';
+                for (let i = 0; i < 60; i++) {
+                    const x = i * (width / 60);
+                    const barHeight = height * 0.1;
+                    ctx.fillRect(x, height - barHeight, width / 60 - 2, barHeight);
+                }
+                return;
+            }
+
+            // Draw frequency bars
+            const barCount = magnitudes.length;
+            const barWidth = width / barCount;
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, height, 0, 0);
+            gradient.addColorStop(0, '#38d9a9');
+            gradient.addColorStop(0.5, '#6c5ce7');
+            gradient.addColorStop(1, '#e74c3c');
+
+            ctx.fillStyle = gradient;
+
+            for (let i = 0; i < barCount; i++) {
+                const magnitude = magnitudes[i];
+                // Normalize magnitude (typically -180 to 0 dB)
+                const normalized = Math.max(0, (magnitude + 60) / 60);
+                const barHeight = normalized * height;
+
+                const x = i * barWidth;
+                ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
+            }
+
+            // Draw grid lines
+            ctx.strokeStyle = '#2a2a3a';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 5; i++) {
+                const y = (height / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Draw frequency labels
+            ctx.fillStyle = '#666';
+            ctx.font = '10px monospace';
+            const labels = ['20Hz', '100Hz', '1kHz', '10kHz', '20kHz'];
+            labels.forEach((label, i) => {
+                const x = (width / 4) * i;
+                ctx.fillText(label, x, height - 5);
+            });
+        }
+
+        // Update stats display
+        function updateStats(data) {
+            frameCountEl.textContent = data.frame || 0;
+
+            if (data.magnitudes && data.magnitudes.length > 0) {
+                const peak = Math.max(...data.magnitudes);
+                const avg = data.magnitudes.reduce((a, b) => a + b, 0) / data.magnitudes.length;
+                peakDbEl.textContent = peak > -180 ? peak.toFixed(1) : '-∞';
+                avgDbEl.textContent = avg > -180 ? avg.toFixed(1) : '-∞';
+            }
+
+            // Calculate FPS
+            const now = performance.now();
+            frameCount++;
+            if (now - lastFrameTime >= 1000) {
+                fps = Math.round(frameCount * 1000 / (now - lastFrameTime));
+                fpsEl.textContent = fps;
+                frameCount = 0;
+                lastFrameTime = now;
+            }
+
+            // Draw the visualization
+            drawFrame(data.magnitudes || []);
+        }
+
+        // Connect to WebSocket
+        function connect() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            try {
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    statusDot.className = 'status-dot connected';
+                    statusText.textContent = 'Connected';
+                    errorMessage.classList.remove('visible');
+                };
+
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        updateStats(data);
+                    } catch (e) {
+                        console.error('Failed to parse message:', e);
+                    }
+                };
+
+                ws.onclose = () => {
+                    statusDot.className = 'status-dot disconnected';
+                    statusText.textContent = 'Disconnected';
+                    setTimeout(connect, 2000);
+                };
+
+                ws.onerror = () => {
+                    errorMessage.classList.add('visible');
+                    ws.close();
+                };
+            } catch (e) {
+                errorMessage.classList.add('visible');
+                setTimeout(connect, 2000);
+            }
+        }
+
+        // Start
+        drawFrame();
+        connect();
+    </script>
+</body>
+</html>
