@@ -3,7 +3,7 @@ using AudioFlow.Dsp.Windowing;
 
 namespace AudioFlow.Dsp.Processing;
 
-public sealed class SpectrumAnalyzer
+public sealed class FftSpectrumAnalyzer
 {
     public float[] Analyze(ReadOnlySpan<float> samples, WindowFunctionType window)
     {

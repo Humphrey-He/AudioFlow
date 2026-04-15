@@ -74,7 +74,7 @@ public sealed class BarVisualizer : IVisualizer, IVisualizerParameterProvider
     {
         if (parameterSet.Values.TryGetValue("Color", out var colorElement))
         {
-            var color = colorElement.Deserialize<SKColor>();
+            var color = colorElement.Deserialize<SKColor?>();
             if (color.HasValue && _paint != null)
             {
                 _paint.Color = color.Value;
