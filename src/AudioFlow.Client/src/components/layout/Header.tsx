@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUiStore } from '@/stores/uiStore';
+import { HelpPanel } from './HelpPanel';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -20,12 +21,17 @@ export function Header({ preset, onPresetChange }: HeaderProps) {
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{t('app.title')}</h1>
+      <div className={styles.titleArea}>
+        <h1 className={styles.title}>{t('app.title')}</h1>
+        <span className={styles.subtitle}>{t('app.subtitle')}</span>
+      </div>
       <div className={styles.headerRight}>
+        <HelpPanel />
         <select
           className={styles.select}
           value={preset}
           onChange={(e) => onPresetChange(e.target.value)}
+          title={t('preset.title')}
         >
           <option value="default">{t('preset.default')}</option>
           <option value="bassic">{t('preset.bassic')}</option>

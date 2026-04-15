@@ -6,6 +6,12 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .title {
   font-size: 24px;
   font-weight: 600;
@@ -14,10 +20,15 @@
   -webkit-text-fill-color: transparent;
 }
 
+.subtitle {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 .headerRight {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .select {

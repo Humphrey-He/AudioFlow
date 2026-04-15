@@ -79,3 +79,10 @@
   width: 150px;
   accent-color: var(--color-primary);
 }
+
+.value {
+  font-size: 11px;
+  color: var(--color-primary);
+  margin-top: 2px;
+  font-family: 'Consolas', monospace;
+}

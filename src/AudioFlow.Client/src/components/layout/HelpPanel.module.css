@@ -1,0 +1,111 @@
+.helpButton {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.helpButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.closeButton:hover {
+  color: var(--color-text);
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.sectionText {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.frequencyGuide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.freqCard {
+  background: var(--color-card);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.freqLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.freqDesc {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}

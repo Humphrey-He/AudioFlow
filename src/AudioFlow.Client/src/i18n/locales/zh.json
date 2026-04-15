@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "AudioFlow"
+    "title": "AudioFlow",
+    "subtitle": "实时频谱可视化器"
   },
   "status": {
     "connected": "已连接",
@@ -11,43 +12,89 @@
   },
   "controls": {
     "smoothing": "平滑算法",
+    "smoothingDesc": "用于平滑频率幅度随时间变化的算法",
+    "smoothingOptions": {
+      "gravity": "重力 (攻击/衰减) - 自然指数响应，对突发声音快速攻击，渐进衰减",
+      "lerp": "线性插值 (LERP) - 以恒定速率在值之间平滑过渡",
+      "none": "无 - 原始数据无平滑，显示精确瞬时值"
+    },
     "attack": "攻击速率",
+    "attackDesc": "幅度向更高新值上升的速度。越高 = 对突发响亮声音的响应越快",
+    "attackRange": "0.1 (慢) 到 1.0 (即时)",
     "decay": "衰减速率",
+    "decayDesc": "声音停止后幅度向更低值下降的速度。越高 = 消退越快",
+    "decayRange": "0.1 (慢) 到 1.0 (即时)",
     "weighting": "频率加权",
-    "gravity": "重力 (攻击/衰减)",
-    "lerp": "线性插值",
-    "none": "无",
-    "aWeighting": "A加权",
-    "cWeighting": "C加权",
-    "linear": "线性"
+    "weightingDesc": "模拟人耳在整个频谱上的灵敏度",
+    "weightingOptions": {
+      "a": "A加权 - 遵循人耳频率响应曲线，强调中频 (2-5kHz)",
+      "c": "C加权 - 更平坦的响应，适合高音量测量",
+      "linear": "线性 - 无加权，显示实际测量值"
+    }
   },
   "effects": {
-    "title": "动效",
+    "title": "视觉效果",
     "glow": "发光",
+    "glowTooltip": "为高能量条形添加发光效果 (> -20dB)。使响亮声音看起来更亮。",
     "reflection": "倒影",
+    "reflectionTooltip": "在每个条形下方显示镜像倒影。增加视觉深度和感知强度。",
     "peak": "峰值保持",
+    "peakTooltip": "保持峰值1.5秒后开始衰减。有助于识别最大电平。",
     "pulse": "背景脉动",
+    "pulseTooltip": "背景随低频能量轻微脉动。创造沉浸式节奏效果。",
     "centerLine": "中心线",
-    "glowTooltip": "为高能量条形添加发光效果 (>-20dB)",
-    "reflectionTooltip": "在每个条形下方显示镜像倒影",
-    "peakTooltip": "保持峰值1.5秒后开始衰减",
-    "pulseTooltip": "背景随低频能量脉动",
-    "lineTooltip": "绘制连接条形中点的平滑曲线"
+    "centerLineTooltip": "绘制连接条形中点的平滑曲线。显示整体频谱形状。"
+  },
+  "preset": {
+    "title": "效果预设",
+    "default": "默认 - 适合一般使用",
+    "bassic": "电子 - 为电子音乐增强效果",
+    "vivid": "炫彩 - 演示用最大视觉效果",
+    "minimal": "简约 - 低功耗设备的最小效果",
+    "custom": "自定义 - 您的自定义配置"
   },
   "stats": {
     "frame": "帧",
+    "frameDesc": "音频分析器的当前帧计数器",
     "peak": "峰值 dB",
+    "peakDesc": "所有频率bins中的最大幅度。正常范围: -60dB 到 0dB",
     "avg": "平均 dB",
-    "fps": "帧率"
+    "avgDesc": "所有频率的平均幅度。表示整体响度",
+    "fps": "帧率",
+    "fpsDesc": "每秒渲染帧数。目标: 60fps"
+  },
+  "diagnostics": {
+    "title": "诊断信息",
+    "messages": "消息",
+    "invalid": "无效",
+    "reconnects": "重连",
+    "lastMsg": "最后消息",
+    "runtimeVer": "运行时版本",
+    "lastError": "最后错误"
+  },
+  "help": {
+    "title": "帮助与信息",
+    "gettingStarted": "入门指南",
+    "gettingStartedText": "1. 确保 AudioFlow 后端服务器正在运行\n2. 提示时授予麦克风/系统音频访问权限\n3. 选择您的首选语言和效果预设\n4. 调整平滑和加权以匹配您的音频源",
+    "keyboard": "键盘快捷键",
+    "keyboardText": "即将推出",
+    "about": "关于 AudioFlow",
+    "aboutText": "AudioFlow 是一个实时音频频谱分析器和可视化器。它捕获系统音频，执行 FFT 分析，并使用可自定义效果渲染精美的可视化效果。"
   },
   "error": {
-    "connect": "无法连接到 AudioFlow 服务器，请确保后端正在运行。"
+    "connect": "无法连接到 AudioFlow 服务器。请确保后端服务器在端口 5000 上运行。",
+    "noAudio": "未检测到音频输入。请检查您的麦克风或系统音频设置。",
+    "serverError": "发生服务器错误。请查看控制台了解详情。"
   },
-  "preset": {
-    "default": "默认",
-    "bassic": "电子",
-    "vivid": "炫彩",
-    "minimal": "简约",
-    "custom": "自定义"
+  "units": {
+    "db": "dB",
+    "hz": "Hz",
+    "khz": "kHz"
+  },
+  "frequency": {
+    "title": "频率标签说明",
+    "low": "低频 (20-200Hz) - 低音、底鼓、低音吉他",
+    "mid": "中频 (200Hz-4kHz) - 人声、吉他、大多数乐器",
+    "high": "高频 (4kHz-20kHz) - 钹帽、踩镲、泛音"
   }
 }

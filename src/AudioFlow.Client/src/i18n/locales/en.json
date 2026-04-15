@@ -1,6 +1,7 @@
 {
   "app": {
-    "title": "AudioFlow"
+    "title": "AudioFlow",
+    "subtitle": "Real-time Spectrum Visualizer"
   },
   "status": {
     "connected": "Connected",
@@ -10,44 +11,90 @@
     "error": "Connection Error"
   },
   "controls": {
-    "smoothing": "Smoothing",
+    "smoothing": "Smoothing Algorithm",
+    "smoothingDesc": "Algorithm used to smooth frequency magnitude changes over time",
+    "smoothingOptions": {
+      "gravity": "Gravity (Attack/Decay) - Natural exponential response, fast attack for sudden sounds, gradual decay",
+      "lerp": "Linear Interpolation (LERP) - Smooth transition between values at constant rate",
+      "none": "None - Raw data without smoothing, shows exact instantaneous values"
+    },
     "attack": "Attack Rate",
+    "attackDesc": "How quickly magnitudes rise toward new higher values. Higher = faster response to sudden loud sounds.",
+    "attackRange": "0.1 (slow) to 1.0 (instant)",
     "decay": "Decay Rate",
-    "weighting": "Weighting",
-    "gravity": "Gravity (Attack/Decay)",
-    "lerp": "Linear Interpolation",
-    "none": "None",
-    "aWeighting": "A-Weighting",
-    "cWeighting": "C-Weighting",
-    "linear": "Linear"
+    "decayDesc": "How quickly magnitudes fall toward lower values after the sound stops. Higher = faster fade out.",
+    "decayRange": "0.1 (slow) to 1.0 (instant)",
+    "weighting": "Frequency Weighting",
+    "weightingDesc": "Simulates human ear sensitivity across frequency spectrum",
+    "weightingOptions": {
+      "a": "A-Weighting - Follows human ear frequency response curve, emphasizes mid frequencies (2-5kHz)",
+      "c": "C-Weighting - Flatter response, good for high volume measurements",
+      "linear": "Linear - No weighting, shows actual measured values"
+    }
   },
   "effects": {
-    "title": "Effects",
+    "title": "Visual Effects",
     "glow": "Glow",
+    "glowTooltip": "Add glow effect to high-energy bars (above -20dB). Makes loud sounds appear brighter.",
     "reflection": "Reflection",
+    "reflectionTooltip": "Show mirrored reflection below each bar. Adds visual depth and perceived intensity.",
     "peak": "Peak Hold",
+    "peakTooltip": "Hold peak values for 1.5s before decaying. Helps identify maximum levels.",
     "pulse": "Background Pulse",
+    "pulseTooltip": "Background subtly pulses with low-frequency energy. Creates immersive rhythm effect.",
     "centerLine": "Center Line",
-    "glowTooltip": "Add glow effect to high-energy bars (above -20dB)",
-    "reflectionTooltip": "Show mirrored reflection below each bar",
-    "peakTooltip": "Hold peak values for 1.5s before decaying",
-    "pulseTooltip": "Background pulses with low-frequency energy",
-    "lineTooltip": "Draw smooth curve connecting bar midpoints"
+    "centerLineTooltip": "Draw smooth curve connecting bar midpoints. Shows overall spectral shape."
+  },
+  "preset": {
+    "title": "Effect Presets",
+    "default": "Default - Balanced for general use",
+    "bassic": "Bassic - Enhanced effects for electronic music",
+    "vivid": "Vivid - Maximum visual effects for demonstration",
+    "minimal": "Minimal - Minimal effects for low-power devices",
+    "custom": "Custom - Your own configuration"
   },
   "stats": {
     "frame": "Frame",
+    "frameDesc": "Current frame counter from the audio analyzer",
     "peak": "Peak dB",
+    "peakDesc": "Maximum magnitude across all frequency bins. Normal range: -60dB to 0dB",
     "avg": "Avg dB",
-    "fps": "FPS"
+    "avgDesc": "Average magnitude across all frequencies. Indicates overall loudness",
+    "fps": "FPS",
+    "fpsDesc": "Frames per second rendered. Target: 60fps"
+  },
+  "diagnostics": {
+    "title": "Diagnostics",
+    "messages": "Messages",
+    "invalid": "Invalid",
+    "reconnects": "Reconnects",
+    "lastMsg": "Last Msg",
+    "runtimeVer": "Runtime Ver",
+    "lastError": "Last Error"
+  },
+  "help": {
+    "title": "Help & Information",
+    "gettingStarted": "Getting Started",
+    "gettingStartedText": "1. Ensure the AudioFlow backend server is running\n2. Grant microphone/system audio access when prompted\n3. Select your preferred language and effect preset\n4. Adjust smoothing and weighting to match your audio source",
+    "keyboard": "Keyboard Shortcuts",
+    "keyboardText": "Coming soon",
+    "about": "About AudioFlow",
+    "aboutText": "AudioFlow is a real-time audio spectrum analyzer and visualizer. It captures system audio, performs FFT analysis, and renders beautiful visualizations with customizable effects."
   },
   "error": {
-    "connect": "Unable to connect to AudioFlow server. Please ensure the backend is running."
+    "connect": "Unable to connect to AudioFlow server. Please ensure the backend is running on port 5000.",
+    "noAudio": "No audio input detected. Please check your microphone or system audio settings.",
+    "serverError": "Server error occurred. Check console for details."
   },
-  "preset": {
-    "default": "Default",
-    "bassic": "Bassic",
-    "vivid": "Vivid",
-    "minimal": "Minimal",
-    "custom": "Custom"
+  "units": {
+    "db": "dB",
+    "hz": "Hz",
+    "khz": "kHz"
+  },
+  "frequency": {
+    "title": "Frequency Labels",
+    "low": "Low (20-200Hz) - Bass, kick drums, bass guitars",
+    "mid": "Mid (200Hz-4kHz) - Vocals, guitars, most instruments",
+    "high": "High (4kHz-20kHz) - Cymbals, hi-hats, harmonics"
   }
 }

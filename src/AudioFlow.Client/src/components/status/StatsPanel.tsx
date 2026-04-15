@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { audioRuntime } from '@/services/audio/audioRuntime';
-import { websocketService } from '@/services/websocket/websocketService';
 import styles from './StatsPanel.module.css';
 
 export function StatsPanel() {
@@ -14,19 +13,11 @@ export function StatsPanel() {
   useEffect(() => {
     const interval = setInterval(() => {
       const snapshot = audioRuntime.getSnapshot();
-      const diagnostics = websocketService.getDiagnostics();
-
       setFrameCount(snapshot.stats.frameCount);
       setPeakDb(snapshot.stats.peakDb);
       setAvgDb(snapshot.stats.avgDb);
-
-      // Get FPS from renderer (we poll the diagnostics for now)
-      // In a real implementation, we'd have a proper FPS polling mechanism
-      if (diagnostics.totalMessages > 0) {
-        // Estimate FPS based on messages
-        const msgRate = diagnostics.totalMessages / Math.max(1, (Date.now() - (diagnostics.lastMessageTime || Date.now())) / 1000);
-        setFps(Math.round(msgRate));
-      }
+      // Estimate FPS from frame rate
+      setFps(Math.round(1000 / Math.max(1, snapshot.version)));
     }, 500);
 
     return () => clearInterval(interval);
@@ -36,19 +27,19 @@ export function StatsPanel() {
 
   return (
     <div className={styles.panel}>
-      <div className={styles.card}>
+      <div className={styles.card} title={t('stats.frameDesc')}>
         <div className={styles.label}>{t('stats.frame')}</div>
         <div className={styles.value}>{frameCount}</div>
       </div>
-      <div className={styles.card}>
+      <div className={styles.card} title={t('stats.peakDesc')}>
         <div className={styles.label}>{t('stats.peak')}</div>
         <div className={styles.value}>{formatDb(peakDb)}</div>
       </div>
-      <div className={styles.card}>
+      <div className={styles.card} title={t('stats.avgDesc')}>
         <div className={styles.label}>{t('stats.avg')}</div>
         <div className={styles.value}>{formatDb(avgDb)}</div>
       </div>
-      <div className={styles.card}>
+      <div className={styles.card} title={t('stats.fpsDesc')}>
         <div className={styles.label}>{t('stats.fps')}</div>
         <div className={styles.value}>{fps}</div>
       </div>
