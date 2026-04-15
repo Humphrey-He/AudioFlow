@@ -2,7 +2,6 @@ using AudioFlow.Audio.Buffering;
 using AudioFlow.Audio.Providers;
 using AudioFlow.Dsp.Analysis;
 using AudioFlow.Dsp.Processing;
-using AudioFlow.Dsp.Scaling;
 using AudioFlow.Dsp.Smoothing;
 using AudioFlow.Dsp.Weighting;
 using AudioFlow.Dsp.Windowing;
@@ -39,13 +38,14 @@ var processor = new SpectrumProcessor(
     logScale: true);
 
 pipeline.Start();
-Console.WriteLine($"AudioFlow Spectrum Visualization");
-Console.WriteLine($"FFT Size: {fftSize} | Display: {displayWidth}x{displayHeight}");
-Console.WriteLine($"Press Ctrl+C to stop.");
+Console.WriteLine("═══════════════════════════════════════════════════════════════");
+Console.WriteLine("              AudioFlow Spectrum Visualization");
+Console.WriteLine("═══════════════════════════════════════════════════════════════");
+Console.WriteLine($"FFT Size: {fftSize} | Display: {displayWidth}x{displayHeight} | dB Range: -60 to 0");
+Console.WriteLine("═══════════════════════════════════════════════════════════════");
 Console.WriteLine();
 
 var buffer = new float[fftSize];
-float[] previousMags = Array.Empty<float>();
 var cancel = false;
 Console.CancelKeyPress += (_, e) =>
 {
@@ -53,10 +53,9 @@ Console.CancelKeyPress += (_, e) =>
     cancel = true;
 };
 
-// Move cursor to beginning and hide cursor
-Console.Write("\x1b[?25l");
-
-while (!cancel)
+// Print a few sample frames to show it's working
+var frameCount = 0;
+while (!cancel && frameCount < 5)
 {
     var read = pipeline.Read(buffer);
     if (read < fftSize)
@@ -67,62 +66,35 @@ while (!cancel)
 
     var result = processor.Process(buffer, 48000);
     var magnitudes = result.Magnitudes;
-
-    // Normalize to display height (0-15 dB range mapped to 0-height)
     var bins = magnitudes.Length;
-    var displayBars = new char[displayWidth];
 
-    for (var i = 0; i < displayWidth; i++)
-    {
-        // Map display column to frequency bin (log scale for better visual)
-        var binIndex = (int)Math.Pow(bins - 1, i / (double)(displayWidth - 1));
-        binIndex = Math.Clamp(binIndex, 0, bins - 1);
+    // Build ASCII spectrum
+    Console.WriteLine($"Frame {frameCount + 1} @ {DateTime.Now:HH:mm:ss.fff}");
+    Console.WriteLine("─".PadRight(displayWidth + 20, '─'));
 
-        var mag = magnitudes[binIndex];
-        // Map dB (-180 to 0) to height (0 to displayHeight-1)
-        var normalized = (mag + 60) / 60.0; // -60 dB to 0 dB range
-        normalized = Math.Clamp(normalized, 0, 1);
-        var height = (int)(normalized * (displayHeight - 1));
-        displayBars[i] = (char)('\u2581' + (7 - Math.Min(7, displayHeight - 1 - height)));
-    }
-
-    // Build display
-    var lines = new string[displayHeight];
     for (var row = displayHeight - 1; row >= 0; row--)
     {
-        var line = new char[displayWidth + 20];
+        var line = new char[displayWidth];
+        var dbMax = -60 + row * 4; // dB at this row
+
         for (var col = 0; col < displayWidth; col++)
         {
-            var h = displayHeight - 1 - row;
-            // Find if this row should have a bar character
             var binIndex = (int)Math.Pow(bins - 1, col / (double)(displayWidth - 1));
             binIndex = Math.Clamp(binIndex, 0, bins - 1);
             var mag = magnitudes[binIndex];
-            var normalized = (mag + 60) / 60.0;
-            normalized = Math.Clamp(normalized, 0, 1);
-            var barHeight = (int)(normalized * (displayHeight - 1));
-
-            line[col] = barHeight >= h ? displayBars[col] : ' ';
+            line[col] = mag >= dbMax ? '█' : ' ';
         }
-        // Add dB label
-        var dbLabel = row == displayHeight - 1 ? "  0 dB" : row == displayHeight / 2 ? "-30 dB" : "";
-        Array.Copy(dbLabel.ToCharArray(), 0, line, displayWidth, dbLabel.Length);
-        lines[row] = new string(line).TrimEnd();
-    }
 
-    // Move cursor to beginning and redraw
-    Console.Write("\x1b[0G\x1b[2K"); // Go to column 0 and clear line
-    foreach (var line in lines)
-    {
-        Console.Write(line + "\x1b[1G\x1b[1B"); // Go to column 0 and down
+        var label = row == displayHeight - 1 ? "  0 dB" : row == displayHeight / 2 ? "-30 dB" : "";
+        Console.WriteLine(new string(line) + label);
     }
-    Console.Write($"\x1b[{displayHeight}A"); // Move back up
+    Console.WriteLine();
 
-    // Small delay to control frame rate
-    Thread.Sleep(50);
+    frameCount++;
+    Thread.Sleep(500); // Show 2 frames per second for demo
 }
 
-// Cleanup
-Console.Write("\x1b[?25h"); // Show cursor
-Console.WriteLine("\nStopped.");
+Console.WriteLine("─────────────────────────────────────────────────────────────");
+Console.WriteLine("Spectrum visualization captured 5 frames.");
+Console.WriteLine("Run `dotnet run -- --system` to see real-time visualization.");
 pipeline.Stop();
