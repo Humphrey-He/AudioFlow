@@ -1,0 +1,109 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  COVERAGE_THRESHOLD: 60
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          files: '**/coverage.opencover.xml'
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Check formatting
+        run: dotnet format --verify --no-restore --exclude '**/obj/**' --exclude '**/bin/**'
+
+      - name: Run dependency review
+        uses: actions/dependency-review-action@v4
+
+      - name: Enforce no deprecated API usage
+        run: |
+          dotnet build --no-restore -p:EnforceCodeStyleInBuild=true --configuration Release 2>&1 | tee build.log
+          if grep -q "warning CS0618" build.log; then
+            echo "::error::Deprecated APIs found in build output"
+            exit 1
+          fi
+
+  benchmark:
+    name: Performance Baseline
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build benchmarks
+        run: dotnet build src/AudioFlow.Bench/AudioFlow.Bench.csproj --configuration Release
+
+      - name: Run benchmarks
+        run: dotnet run --project src/AudioFlow.Bench/AudioFlow.Bench.csproj --no-build --configuration Release
+
+      - name: Compare with baseline
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'dotnet'
+          output-file-path: benchmark.json
+          auto-push: false
+          comment-on-alert: true
+          alert-threshold: '10%'
+          fail-on-alert: false
+
+  dependency-approval:
+    name: Dependency Approval
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality]
+
+    steps:
+      - name: Verify all checks passed
+        run: |
+          echo "All quality gates passed"
