@@ -25,13 +25,13 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build src/ --no-restore --configuration Release
 
       - name: Run tests
-        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test src/ --no-build --configuration Release --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
@@ -55,14 +55,14 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Check formatting
-        run: dotnet format --verify --no-restore --exclude '**/obj/**' --exclude '**/bin/**'
+        run: dotnet format src/ --verify --no-restore --exclude '**/obj/**' --exclude '**/bin/**'
 
       - name: Run dependency review
         uses: actions/dependency-review-action@v4
 
       - name: Enforce no deprecated API usage
         run: |
-          dotnet build --no-restore -p:EnforceCodeStyleInBuild=true --configuration Release 2>&1 | tee build.log
+          dotnet build src/ --no-restore -p:EnforceCodeStyleInBuild=true --configuration Release 2>&1 | tee build.log
           if grep -q "warning CS0618" build.log; then
             echo "::error::Deprecated APIs found in build output"
             exit 1
