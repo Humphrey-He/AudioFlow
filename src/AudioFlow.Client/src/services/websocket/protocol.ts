@@ -27,7 +27,20 @@ export interface ErrorMessage {
   message: string;
 }
 
-export type IncomingMessage = SpectrumFrame | SettingsAck | Heartbeat | ErrorMessage;
+// Room-related messages
+export interface RoomCreated {
+  type: 'room_created';
+  code: string;
+  maxParticipants: number;
+}
+
+export interface RoomJoined {
+  type: 'room_joined';
+  code: string;
+  participantCount: number;
+}
+
+export type IncomingMessage = SpectrumFrame | SettingsAck | Heartbeat | ErrorMessage | RoomCreated | RoomJoined;
 
 export interface OutgoingSettings {
   type: 'settings';
@@ -86,6 +99,26 @@ export function validateMessage(raw: unknown): IncomingMessage | null {
       type: 'error',
       code: msg.code,
       message: msg.message,
+    };
+  }
+
+  if (msg.type === 'room_created') {
+    if (typeof msg.code !== 'string') return null;
+    if (typeof msg.maxParticipants !== 'number') return null;
+    return {
+      type: 'room_created',
+      code: msg.code,
+      maxParticipants: msg.maxParticipants,
+    };
+  }
+
+  if (msg.type === 'room_joined') {
+    if (typeof msg.code !== 'string') return null;
+    if (typeof msg.participantCount !== 'number') return null;
+    return {
+      type: 'room_joined',
+      code: msg.code,
+      participantCount: msg.participantCount,
     };
   }
 

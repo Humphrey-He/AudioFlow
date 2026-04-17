@@ -189,5 +189,35 @@
     "imported": "プリセットをインポートしました！",
     "invalid": "無効なプリセット形式",
     "pasteJson": "ここにプリセットJSONを貼り付け..."
+  },
+  "party": {
+    "title": "音楽パーティー",
+    "createRoom": "ルーム作成",
+    "createDesc": "パーティーを開き友達を招待してビジュアライゼーションを共有",
+    "joinRoom": "ルーム参加",
+    "joinDesc": "ルームコードを入力して友達と視聴",
+    "create": "作成",
+    "join": "参加",
+    "leave": "退出",
+    "hosting": "パーティー主催中",
+    "watching": "パーティー視聴中",
+    "roomCode": "ルームコード",
+    "enterCode": "ABCDEF",
+    "viewers": "{{count}}人の視聴者",
+    "or": "または"
+  },
+  "game": {
+    "title": "ビートゲーム",
+    "start": "ゲーム開始",
+    "stop": "停止",
+    "score": "スコア",
+    "highScore": "ハイスコア",
+    "combo": "コンボ",
+    "perfect": "パーフェクト！",
+    "great": "グレート！",
+    "good": "いいね！",
+    "miss": "ミス！",
+    "tapPrompt": "ビートに合わせてタップ！",
+    "instructions": "スペクトラムを見て、バーのピーク時にタップ！"
   }
 }

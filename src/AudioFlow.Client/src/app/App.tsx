@@ -16,6 +16,8 @@ import { PresetShare } from '@/components/controls/PresetShare';
 import { ControlsPanel } from '@/components/controls/ControlsPanel';
 import { EffectsPanel } from '@/components/controls/EffectsPanel';
 import { MobileMenu } from '@/components/layout/MobileMenu';
+import { PartyRoom } from '@/components/controls/PartyRoom';
+import { BeatGame } from '@/components/game/BeatGame';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUiStore } from '@/stores/uiStore';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -50,6 +52,10 @@ export function App() {
       <MobileMenu title={t('menu.tools')}>
         <RecordingButton />
         <PresetShare />
+        <PartyRoom />
+      </MobileMenu>
+      <MobileMenu title={t('game.title')}>
+        <BeatGame />
       </MobileMenu>
       <AudioPlayer />
       <MobileMenu title={t('menu.settings')}>

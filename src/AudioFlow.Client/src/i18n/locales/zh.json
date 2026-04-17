@@ -189,5 +189,35 @@
     "imported": "预设导入成功！",
     "invalid": "无效的预设格式",
     "pasteJson": "在此粘贴预设JSON..."
+  },
+  "party": {
+    "title": "音乐派对",
+    "createRoom": "创建房间",
+    "createDesc": "创建派对并邀请朋友观看你的可视化效果",
+    "joinRoom": "加入房间",
+    "joinDesc": "输入房间码与朋友一起观看",
+    "create": "创建",
+    "join": "加入",
+    "leave": "离开",
+    "hosting": "正在主持派对",
+    "watching": "正在观看派对",
+    "roomCode": "房间码",
+    "enterCode": "ABCDEF",
+    "viewers": "{{count}} 位观众",
+    "or": "或"
+  },
+  "game": {
+    "title": "节奏游戏",
+    "start": "开始游戏",
+    "stop": "停止",
+    "score": "得分",
+    "highScore": "最高分",
+    "combo": "连击",
+    "perfect": "完美！",
+    "great": "太棒了！",
+    "good": "不错！",
+    "miss": "错过！",
+    "tapPrompt": "跟随节拍点击！",
+    "instructions": "观察频谱，在峰值时点击！"
   }
 }

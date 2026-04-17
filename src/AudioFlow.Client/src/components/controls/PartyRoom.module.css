@@ -1,0 +1,164 @@
+.container {
+  padding: 16px;
+  background: rgba(30, 30, 50, 0.8);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.createSection,
+.joinSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.createSection h3,
+.joinSection h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #38d9a9;
+}
+
+.description {
+  margin: 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #666;
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.codeInput {
+  flex: 1;
+  padding: 10px 14px;
+  background: #1a1a2e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  font-family: monospace;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.codeInput:focus {
+  outline: none;
+  border-color: #38d9a9;
+}
+
+.createButton,
+.joinButton {
+  padding: 10px 20px;
+  background: #38d9a9;
+  border: none;
+  border-radius: 8px;
+  color: #0a0a0f;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.createButton:hover,
+.joinButton:hover {
+  background: #2fc49a;
+}
+
+.joinButton:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.roomInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #1a1a2e;
+  border-radius: 12px;
+}
+
+.roomInfo h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #38d9a9;
+}
+
+.codeDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.codeLabel {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.code {
+  font-size: 32px;
+  font-family: monospace;
+  letter-spacing: 8px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.participantCount {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
+.leaveButton {
+  padding: 8px 24px;
+  background: #e74c3c;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.leaveButton:hover {
+  background: #c0392b;
+}
+
+.error {
+  margin: 0;
+  padding: 10px;
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  color: #e74c3c;
+  font-size: 13px;
+  text-align: center;
+}

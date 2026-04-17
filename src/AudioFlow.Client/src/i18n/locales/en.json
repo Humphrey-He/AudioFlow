@@ -189,5 +189,35 @@
     "imported": "Preset imported successfully!",
     "invalid": "Invalid preset format",
     "pasteJson": "Paste preset JSON here..."
+  },
+  "party": {
+    "title": "Music Party",
+    "createRoom": "Create Room",
+    "createDesc": "Start a party and invite friends to watch your visualization",
+    "joinRoom": "Join Room",
+    "joinDesc": "Enter a room code to watch with friends",
+    "create": "Create",
+    "join": "Join",
+    "leave": "Leave",
+    "hosting": "Hosting Party",
+    "watching": "Watching Party",
+    "roomCode": "Room Code",
+    "enterCode": "ABCDEF",
+    "viewers": "{{count}} viewers",
+    "or": "OR"
+  },
+  "game": {
+    "title": "Beat Game",
+    "start": "Start Game",
+    "stop": "Stop",
+    "score": "Score",
+    "highScore": "High Score",
+    "combo": "Combo",
+    "perfect": "Perfect!",
+    "great": "Great!",
+    "good": "Good!",
+    "miss": "Miss!",
+    "tapPrompt": "Tap on beat!",
+    "instructions": "Watch the spectrum and tap when bars peak!"
   }
 }

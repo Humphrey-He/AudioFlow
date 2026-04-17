@@ -1,0 +1,178 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(30, 30, 50, 0.9);
+  border-radius: 16px;
+  min-height: 300px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #38d9a9;
+  text-align: center;
+}
+
+.instructions {
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.finalScore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(56, 217, 169, 0.1);
+  border-radius: 12px;
+}
+
+.scoreLabel {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.scoreValue {
+  font-size: 48px;
+  font-weight: bold;
+  color: #38d9a9;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statPerfect { color: #38d9a9; }
+.statGreat { color: #6c5ce7; }
+.statGood { color: #f39c12; }
+.statMiss { color: #e74c3c; }
+
+.maxCombo {
+  font-size: 14px;
+  color: #888;
+}
+
+.highScore {
+  text-align: center;
+  font-size: 16px;
+  color: #f39c12;
+}
+
+.startButton,
+.stopButton {
+  padding: 16px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.startButton {
+  background: #38d9a9;
+  color: #0a0a0f;
+}
+
+.startButton:hover {
+  background: #2fc49a;
+  transform: scale(1.02);
+}
+
+.stopButton {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.stopButton:hover {
+  background: #c0392b;
+}
+
+.gameHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(26, 26, 46, 0.8);
+  border-radius: 12px;
+}
+
+.currentScore,
+.currentCombo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.comboLabel {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.comboValue {
+  font-size: 28px;
+  font-weight: bold;
+  color: #6c5ce7;
+}
+
+.gameArea {
+  position: relative;
+  height: 200px;
+  background: rgba(26, 26, 46, 0.6);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background 0.1s;
+}
+
+.gameArea:active {
+  background: rgba(56, 217, 169, 0.2);
+}
+
+.targetZone {
+  position: absolute;
+  bottom: 20px;
+  left: 10%;
+  right: 10%;
+  height: 120px;
+  border: 2px dashed #333;
+  border-radius: 8px;
+}
+
+.targetIndicator {
+  position: absolute;
+  top: -8px;
+  width: 4px;
+  height: calc(100% + 16px);
+  background: #38d9a9;
+  border-radius: 2px;
+  box-shadow: 0 0 10px #38d9a9;
+  transition: left 0.3s ease-out;
+}
+
+.tapPrompt {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(56, 217, 169, 0.5);
+}
+
+.resultPerfect { color: #38d9a9; }
+.resultGreat { color: #6c5ce7; }
+.resultGood { color: #f39c12; }
+.resultMiss { color: #e74c3c; }
