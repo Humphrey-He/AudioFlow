@@ -101,7 +101,7 @@ export function AudioPlayer() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="audio/*"
+        accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/flac,audio/aac,audio/m4a,.mp3,.wav,.ogg,.flac,.aac,.m4a"
         className={styles.uploadInput}
         onChange={handleFileChange}
       />

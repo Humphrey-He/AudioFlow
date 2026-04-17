@@ -63,10 +63,12 @@ export class AudioPlayer {
 
           this.audioBuffer = await this.audioContext!.decodeAudioData(arrayBuffer);
 
-          // Create a silent source to connect the analyser for file analysis
+          // Create a source connected through analyser -> gain -> destination for file analysis
           this.sourceNode = this.audioContext!.createBufferSource();
           this.sourceNode.buffer = this.audioBuffer;
+          // Connect: source -> analyser -> gain -> destination
           this.sourceNode.connect(this.analyserNode!);
+          this.analyserNode!.connect(this.gainNode!);
           this.sourceNode.onended = () => {
             if (this.isPlaying) {
               this.isPlaying = false;
@@ -114,7 +116,9 @@ export class AudioPlayer {
     // Create new source
     this.sourceNode = this.audioContext.createBufferSource();
     this.sourceNode.buffer = this.audioBuffer;
+    // Connect: source -> analyser -> gain -> destination (for both visualization AND sound)
     this.sourceNode.connect(this.analyserNode!);
+    this.analyserNode!.connect(this.gainNode!);
 
     this.sourceNode.onended = () => {
       if (this.isPlaying) {
