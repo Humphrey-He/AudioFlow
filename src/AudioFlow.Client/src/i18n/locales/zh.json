@@ -238,5 +238,9 @@
     "success": "导出成功！",
     "error": "导出失败",
     "noData": "无频谱数据"
+  },
+  "mobile": {
+    "pinchToZoom": "双指缩放",
+    "swipeToScroll": "滑动滚动"
   }
 }

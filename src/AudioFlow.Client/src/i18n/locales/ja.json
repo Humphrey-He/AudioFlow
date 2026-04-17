@@ -238,5 +238,9 @@
     "success": "エクスポート成功！",
     "error": "エクスポート失敗",
     "noData": "スペクトラムデータがありません"
+  },
+  "mobile": {
+    "pinchToZoom": "ピンチでズーム",
+    "swipeToScroll": "スワイプでスクロール"
   }
 }

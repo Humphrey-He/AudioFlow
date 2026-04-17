@@ -1,11 +1,3 @@
-.canvas {
-  width: 100%;
-  height: 300px;
-  background: var(--color-bg);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
 .container {
   position: relative;
   margin-top: 30px;
@@ -14,6 +6,19 @@
   padding: 30px;
   border: 1px solid var(--color-border);
   overflow: hidden;
+}
+
+.canvas {
+  width: 100%;
+  height: 300px;
+  background: var(--color-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  /* Enable touch actions for gestures */
+  touch-action: none;
+  /* Prevent text selection on canvas */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Tablet */
@@ -29,15 +34,37 @@
   }
 }
 
-/* Mobile portrait */
-@media (max-width: 480px) {
+/* Mobile portrait - optimize for vertical layout */
+@media (orientation: portrait) and (max-width: 768px) {
   .container {
     padding: 12px;
     margin-top: 10px;
     border-radius: 8px;
+    /* Full width on mobile */
+    width: calc(100% - var(--safe-area-left) - var(--safe-area-right));
+    margin-left: calc(var(--safe-area-left) * -0.5);
+    margin-right: calc(var(--safe-area-right) * -0.5);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 
   .canvas {
-    height: 200px;
+    height: 40vh;
+    min-height: 180px;
+    max-height: 50vh;
+    border-radius: 0;
+  }
+}
+
+/* Mobile portrait small screens */
+@media (orientation: portrait) and (max-width: 480px) {
+  .container {
+    padding: 8px 0;
+  }
+
+  .canvas {
+    height: 35vh;
+    min-height: 150px;
   }
 }

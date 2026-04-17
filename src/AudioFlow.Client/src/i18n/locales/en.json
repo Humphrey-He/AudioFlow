@@ -238,5 +238,9 @@
     "success": "Export successful!",
     "error": "Export failed",
     "noData": "No spectrum data"
+  },
+  "mobile": {
+    "pinchToZoom": "Pinch to zoom",
+    "swipeToScroll": "Swipe to scroll"
   }
 }
