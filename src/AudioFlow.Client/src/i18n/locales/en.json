@@ -43,7 +43,9 @@
     "pulse": "Background Pulse",
     "pulseTooltip": "Background subtly pulses with low-frequency energy. Creates immersive rhythm effect.",
     "centerLine": "Center Line",
-    "centerLineTooltip": "Draw smooth curve connecting bar midpoints. Shows overall spectral shape."
+    "centerLineTooltip": "Draw smooth curve connecting bar midpoints. Shows overall spectral shape.",
+    "instruments": "Instrument",
+    "instrumentsTooltip": "Automatically detect and label instruments based on spectrum peaks"
   },
   "frequency": {
     "title": "Frequency Isolation",
@@ -219,5 +221,15 @@
     "miss": "Miss!",
     "tapPrompt": "Tap on beat!",
     "instructions": "Watch the spectrum and tap when bars peak!"
+  },
+  "instrument": {
+    "title": "Instrument Detection",
+    "noSignal": "Waiting for audio signal...",
+    "bass": "Bass",
+    "bassGuitar": "Bass Guitar",
+    "guitars": "Guitar/Piano/Vocal",
+    "vocalHigh": "Vocal High",
+    "hihat": "Hi-Hat",
+    "ultraHigh": "Ultra High"
   }
 }

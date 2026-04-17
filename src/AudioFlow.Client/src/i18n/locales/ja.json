@@ -43,7 +43,9 @@
     "pulse": "背景パルス",
     "pulseTooltip": "背景が低音周波数エネルギーと連動してわずかにパルス。没入型リズム効果を創出。",
     "centerLine": "センターバランス",
-    "centerLineTooltip": "バーの中間点を結ぶスムーズなカーブを描画。全体的なスペクトル形状を表示。"
+    "centerLineTooltip": "バーの中間点を結ぶスムーズなカーブを描画。全体的なスペクトル形状を表示。",
+    "instruments": "楽器検出",
+    "instrumentsTooltip": "スペクトラムのピークに基づいて楽器を自動検出およびラベル表示"
   },
   "frequency": {
     "title": "周波数アイソレーション",
@@ -219,5 +221,15 @@
     "miss": "ミス！",
     "tapPrompt": "ビートに合わせてタップ！",
     "instructions": "スペクトラムを見て、バーのピーク時にタップ！"
+  },
+  "instrument": {
+    "title": "楽器検出",
+    "noSignal": "オーディオ信号を待っています...",
+    "bass": "ベース",
+    "bassGuitar": "ベースギター",
+    "guitars": "ギター/ピアノ/ボーカル",
+    "vocalHigh": "ボーカル高音",
+    "hihat": "ハイハット",
+    "ultraHigh": "超高音"
   }
 }

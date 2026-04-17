@@ -43,7 +43,9 @@
     "pulse": "背景脉动",
     "pulseTooltip": "背景随低频能量轻微脉动。创造沉浸式节奏效果。",
     "centerLine": "中心线",
-    "centerLineTooltip": "绘制连接条形中点的平滑曲线。显示整体频谱形状。"
+    "centerLineTooltip": "绘制连接条形中点的平滑曲线。显示整体频谱形状。",
+    "instruments": "乐器指示",
+    "instrumentsTooltip": "根据频谱峰值自动识别并标注对应乐器"
   },
   "frequency": {
     "title": "频率隔离",
@@ -219,5 +221,15 @@
     "miss": "错过！",
     "tapPrompt": "跟随节拍点击！",
     "instructions": "观察频谱，在峰值时点击！"
+  },
+  "instrument": {
+    "title": "乐器检测",
+    "noSignal": "等待音频信号...",
+    "bass": "贝斯",
+    "bassGuitar": "低音吉他",
+    "guitars": "吉他/钢琴/人声",
+    "vocalHigh": "人声中高频",
+    "hihat": "镲片",
+    "ultraHigh": "极高频"
   }
 }

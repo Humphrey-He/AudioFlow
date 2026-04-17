@@ -5,6 +5,7 @@ import { StatsPanel } from '@/components/status/StatsPanel';
 import { DiagnosticsPanel } from '@/components/status/DiagnosticsPanel';
 import { BeatIndicator } from '@/components/status/BeatIndicator';
 import { PeakStats } from '@/components/status/PeakStats';
+import { InstrumentIndicator } from '@/components/status/InstrumentIndicator';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
 import { ThreeDSpectrum } from '@/components/canvas/ThreeDSpectrum';
@@ -41,7 +42,10 @@ export function App() {
       ) : visualizationMode === 'comparison' ? (
         <ComparisonCanvas />
       ) : (
-        <SpectrumCanvas />
+        <>
+          <SpectrumCanvas />
+          <InstrumentIndicator />
+        </>
       )}
       <BeatIndicator />
       <MobileMenu title={t('menu.analysis')}>

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import styles from './EffectsPanel.module.css';
 
-const effectKeys = ['glow', 'reflection', 'peak', 'pulse', 'centerLine'] as const;
+const effectKeys = ['glow', 'reflection', 'peak', 'pulse', 'centerLine', 'showInstruments'] as const;
 
 export function EffectsPanel() {
   const { t } = useTranslation();

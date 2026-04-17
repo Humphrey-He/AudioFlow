@@ -11,6 +11,7 @@ export interface EffectsState {
   pulse: boolean;
   centerLine: boolean;
   frequencyRange: FrequencyRange;
+  showInstruments: boolean;
 }
 
 export interface SettingsState {
@@ -30,13 +31,14 @@ const defaultEffects: EffectsState = {
   pulse: false,
   centerLine: false,
   frequencyRange: 'all',
+  showInstruments: false,
 };
 
 const presets: Record<string, EffectsState> = {
-  default: { glow: true, reflection: true, peak: true, pulse: false, centerLine: false, frequencyRange: 'all' },
-  bassic: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all' },
-  vivid: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all' },
-  minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false, frequencyRange: 'all' },
+  default: { glow: true, reflection: true, peak: true, pulse: false, centerLine: false, frequencyRange: 'all', showInstruments: false },
+  bassic: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all', showInstruments: true },
+  vivid: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all', showInstruments: true },
+  minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false, frequencyRange: 'all', showInstruments: false },
 };
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
