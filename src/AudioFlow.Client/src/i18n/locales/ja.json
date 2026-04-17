@@ -250,6 +250,14 @@
     "threshold": "しきい値",
     "colorFollow": "棒グラフの色に従う"
   },
+  "mix": {
+    "title": "ミキサーモード",
+    "sources": "ソース",
+    "layout": "レイアウト",
+    "overlay": "オーバーレイ",
+    "sideBySide": "サイドバイサイド",
+    "stacked": "スタック"
+  },
   "gradient": {
     "title": "カスタムグラデーション",
     "enable": "有効",

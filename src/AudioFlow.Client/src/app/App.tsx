@@ -9,6 +9,7 @@ import { InstrumentIndicator } from '@/components/status/InstrumentIndicator';
 import { SpectrumExporter } from '@/components/status/SpectrumExporter';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
+import { MixCanvas } from '@/components/canvas/MixCanvas';
 import { ThreeDSpectrum } from '@/components/canvas/ThreeDSpectrum';
 import { ParticleEffects } from '@/components/canvas/ParticleEffects';
 import { VisualizationSelector } from '@/components/canvas/VisualizationSelector';
@@ -45,6 +46,8 @@ export function App() {
         <ThreeDSpectrum />
       ) : visualizationMode === 'comparison' ? (
         <ComparisonCanvas />
+      ) : visualizationMode === 'mix' ? (
+        <MixCanvas />
       ) : (
         <>
           <SpectrumCanvas />

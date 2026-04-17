@@ -16,6 +16,7 @@ export function VisualizationSelector() {
     { key: 'polar', label: t('visualization.polar') },
     { key: '3d', label: t('visualization.3d') },
     { key: 'comparison', label: t('visualization.comparison') },
+    { key: 'mix', label: t('mix.title') },
   ];
 
   return (

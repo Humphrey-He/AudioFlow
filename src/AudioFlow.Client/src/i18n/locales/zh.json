@@ -250,6 +250,14 @@
     "threshold": "能量阈值",
     "colorFollow": "颜色跟随条形"
   },
+  "mix": {
+    "title": "混音模式",
+    "sources": "音频源",
+    "layout": "布局",
+    "overlay": "叠加",
+    "sideBySide": "并排",
+    "stacked": "堆叠"
+  },
   "gradient": {
     "title": "自定义渐变",
     "enable": "启用",

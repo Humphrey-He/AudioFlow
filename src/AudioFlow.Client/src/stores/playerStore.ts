@@ -27,6 +27,20 @@ export interface ComparisonConfig {
   splitView: 'horizontal' | 'vertical';
 }
 
+export interface MixSource {
+  id: string;
+  name: string;
+  type: 'system' | 'microphone' | 'file';
+  color: string;
+  visible: boolean;
+}
+
+export interface MixConfig {
+  sources: MixSource[];
+  layout: 'stacked' | 'side-by-side' | 'overlay';
+  blendMode: 'normal' | 'additive' | 'screen';
+}
+
 export interface CustomGradient {
   low: string;
   mid: string;
@@ -62,6 +76,7 @@ interface PlayerState {
   comparisonConfig: ComparisonConfig;
   customGradient: CustomGradient;
   particleConfig: ParticleConfig;
+  mixConfig: MixConfig;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -77,6 +92,7 @@ interface PlayerState {
   updateComparisonConfig: (config: Partial<ComparisonConfig>) => void;
   updateCustomGradient: (config: Partial<CustomGradient>) => void;
   updateParticleConfig: (config: Partial<ParticleConfig>) => void;
+  updateMixConfig: (config: Partial<MixConfig>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -121,6 +137,14 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     energyThreshold: 0.5,
     colorFollowBar: true,
   },
+  mixConfig: {
+    sources: [
+      { id: 'source1', name: 'Source 1', type: 'system', color: '#38d9a9', visible: true },
+      { id: 'source2', name: 'Source 2', type: 'microphone', color: '#6c5ce7', visible: true },
+    ],
+    layout: 'overlay',
+    blendMode: 'additive',
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -152,5 +176,9 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   updateParticleConfig: (config) =>
     set((state) => ({
       particleConfig: { ...state.particleConfig, ...config },
+    })),
+  updateMixConfig: (config) =>
+    set((state) => ({
+      mixConfig: { ...state.mixConfig, ...config },
     })),
 }));

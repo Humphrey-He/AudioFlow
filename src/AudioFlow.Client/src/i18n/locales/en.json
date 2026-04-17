@@ -250,6 +250,14 @@
     "threshold": "Threshold",
     "colorFollow": "Color follows bar"
   },
+  "mix": {
+    "title": "Mix Mode",
+    "sources": "Sources",
+    "layout": "Layout",
+    "overlay": "Overlay",
+    "sideBySide": "Side by Side",
+    "stacked": "Stacked"
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",
