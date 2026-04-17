@@ -76,6 +76,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
+  touch-action: manipulation;
 }
 
 .startButton {
@@ -88,6 +89,10 @@
   transform: scale(1.02);
 }
 
+.startButton:active {
+  transform: scale(0.98);
+}
+
 .stopButton {
   background: #e74c3c;
   color: #fff;
@@ -95,6 +100,10 @@
 
 .stopButton:hover {
   background: #c0392b;
+}
+
+.stopButton:active {
+  transform: scale(0.98);
 }
 
 .gameHeader {
@@ -137,7 +146,9 @@
   align-items: center;
   justify-content: center;
   user-select: none;
+  -webkit-user-select: none;
   transition: background 0.1s;
+  touch-action: manipulation;
 }
 
 .gameArea:active {
@@ -176,3 +187,114 @@
 .resultGreat { color: #6c5ce7; }
 .resultGood { color: #f39c12; }
 .resultMiss { color: #e74c3c; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+    gap: 12px;
+    min-height: 250px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .instructions {
+    font-size: 13px;
+  }
+
+  .scoreValue {
+    font-size: 36px;
+  }
+
+  .stats {
+    gap: 12px;
+    font-size: 12px;
+  }
+
+  .gameHeader {
+    padding: 10px 12px;
+  }
+
+  .comboValue {
+    font-size: 22px;
+  }
+
+  .gameArea {
+    height: 160px;
+  }
+
+  .startButton,
+  .stopButton {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+}
+
+/* Mobile portrait */
+@media (orientation: portrait) and (max-width: 480px) {
+  .container {
+    padding: 12px;
+    gap: 10px;
+    min-height: 200px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .instructions {
+    font-size: 12px;
+  }
+
+  .finalScore {
+    padding: 12px;
+  }
+
+  .scoreValue {
+    font-size: 32px;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .highScore {
+    font-size: 14px;
+  }
+
+  .gameHeader {
+    padding: 8px 10px;
+  }
+
+  .comboValue {
+    font-size: 20px;
+  }
+
+  .comboLabel {
+    font-size: 9px;
+  }
+
+  .gameArea {
+    height: 140px;
+  }
+
+  .targetZone {
+    bottom: 15px;
+    height: 100px;
+  }
+
+  .tapPrompt {
+    font-size: 20px;
+  }
+
+  .startButton,
+  .stopButton {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+}
