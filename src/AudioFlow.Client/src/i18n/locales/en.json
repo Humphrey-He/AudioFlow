@@ -241,6 +241,15 @@
     "error": "Export failed",
     "noData": "No spectrum data"
   },
+  "particle": {
+    "title": "Particle Effects",
+    "enable": "Enable",
+    "count": "Count",
+    "size": "Size",
+    "speed": "Speed",
+    "threshold": "Threshold",
+    "colorFollow": "Color follows bar"
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",

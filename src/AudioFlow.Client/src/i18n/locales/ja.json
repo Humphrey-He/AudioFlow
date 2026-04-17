@@ -241,6 +241,15 @@
     "error": "エクスポート失敗",
     "noData": "スペクトラムデータがありません"
   },
+  "particle": {
+    "title": "パーティクルエフェクト",
+    "enable": "有効",
+    "count": "数量",
+    "size": "サイズ",
+    "speed": "速度",
+    "threshold": "しきい値",
+    "colorFollow": "棒グラフの色に従う"
+  },
   "gradient": {
     "title": "カスタムグラデーション",
     "enable": "有効",

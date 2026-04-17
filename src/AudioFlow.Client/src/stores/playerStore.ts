@@ -34,6 +34,15 @@ export interface CustomGradient {
   useCustom: boolean;
 }
 
+export interface ParticleConfig {
+  enabled: boolean;
+  count: number;
+  size: number;
+  speed: number;
+  energyThreshold: number;
+  colorFollowBar: boolean;
+}
+
 interface PlayerState {
   // Playback state
   isPlaying: boolean;
@@ -52,6 +61,7 @@ interface PlayerState {
   threeDConfig: ThreeDConfig;
   comparisonConfig: ComparisonConfig;
   customGradient: CustomGradient;
+  particleConfig: ParticleConfig;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -66,6 +76,7 @@ interface PlayerState {
   updateThreeDConfig: (config: Partial<ThreeDConfig>) => void;
   updateComparisonConfig: (config: Partial<ComparisonConfig>) => void;
   updateCustomGradient: (config: Partial<CustomGradient>) => void;
+  updateParticleConfig: (config: Partial<ParticleConfig>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -102,6 +113,14 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     high: '#e74c3c',
     useCustom: false,
   },
+  particleConfig: {
+    enabled: false,
+    count: 50,
+    size: 3,
+    speed: 2,
+    energyThreshold: 0.5,
+    colorFollowBar: true,
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -129,5 +148,9 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   updateCustomGradient: (config) =>
     set((state) => ({
       customGradient: { ...state.customGradient, ...config },
+    })),
+  updateParticleConfig: (config) =>
+    set((state) => ({
+      particleConfig: { ...state.particleConfig, ...config },
     })),
 }));

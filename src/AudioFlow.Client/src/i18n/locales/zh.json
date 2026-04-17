@@ -241,6 +241,15 @@
     "error": "导出失败",
     "noData": "无频谱数据"
   },
+  "particle": {
+    "title": "粒子特效",
+    "enable": "启用",
+    "count": "数量",
+    "size": "大小",
+    "speed": "速度",
+    "threshold": "能量阈值",
+    "colorFollow": "颜色跟随条形"
+  },
   "gradient": {
     "title": "自定义渐变",
     "enable": "启用",

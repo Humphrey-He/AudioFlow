@@ -10,12 +10,14 @@ import { SpectrumExporter } from '@/components/status/SpectrumExporter';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
 import { ThreeDSpectrum } from '@/components/canvas/ThreeDSpectrum';
+import { ParticleEffects } from '@/components/canvas/ParticleEffects';
 import { VisualizationSelector } from '@/components/canvas/VisualizationSelector';
 import { AudioPlayer } from '@/components/controls/AudioPlayer';
 import { SourceSelector } from '@/components/controls/SourceSelector';
 import { RecordingButton } from '@/components/controls/RecordingButton';
 import { PresetShare } from '@/components/controls/PresetShare';
 import { ColorGradientEditor } from '@/components/controls/ColorGradientEditor';
+import { ParticleEditor } from '@/components/controls/ParticleEditor';
 import { ControlsPanel } from '@/components/controls/ControlsPanel';
 import { EffectsPanel } from '@/components/controls/EffectsPanel';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -46,6 +48,7 @@ export function App() {
       ) : (
         <>
           <SpectrumCanvas />
+          <ParticleEffects />
           <InstrumentIndicator />
         </>
       )}
@@ -68,6 +71,7 @@ export function App() {
       <MobileMenu title={t('menu.settings')}>
         <EffectsPanel />
         <ColorGradientEditor />
+        <ParticleEditor />
         <ControlsPanel />
       </MobileMenu>
       <StatsPanel />
