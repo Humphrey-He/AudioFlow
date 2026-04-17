@@ -6,6 +6,7 @@ import { DiagnosticsPanel } from '@/components/status/DiagnosticsPanel';
 import { BeatIndicator } from '@/components/status/BeatIndicator';
 import { PeakStats } from '@/components/status/PeakStats';
 import { InstrumentIndicator } from '@/components/status/InstrumentIndicator';
+import { SpectrumExporter } from '@/components/status/SpectrumExporter';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
 import { ThreeDSpectrum } from '@/components/canvas/ThreeDSpectrum';
@@ -50,6 +51,7 @@ export function App() {
       <BeatIndicator />
       <MobileMenu title={t('menu.analysis')}>
         <PeakStats />
+        <SpectrumExporter />
       </MobileMenu>
       <VisualizationSelector />
       <SourceSelector />

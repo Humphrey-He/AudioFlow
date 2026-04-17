@@ -1,0 +1,80 @@
+.container {
+  padding: 12px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.formatSelector {
+  display: flex;
+  gap: 12px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.radio input {
+  cursor: pointer;
+}
+
+.radio input:checked + span {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.exportButton {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-bg);
+  background: var(--color-primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.exportButton:hover {
+  opacity: 0.85;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--color-primary);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

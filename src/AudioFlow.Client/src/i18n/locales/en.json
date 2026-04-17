@@ -231,5 +231,12 @@
     "vocalHigh": "Vocal High",
     "hihat": "Hi-Hat",
     "ultraHigh": "Ultra High"
+  },
+  "spectrumExport": {
+    "title": "Spectrum Export",
+    "export": "Export",
+    "success": "Export successful!",
+    "error": "Export failed",
+    "noData": "No spectrum data"
   }
 }

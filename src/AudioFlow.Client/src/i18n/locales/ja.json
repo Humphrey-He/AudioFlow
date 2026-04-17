@@ -231,5 +231,12 @@
     "vocalHigh": "ボーカル高音",
     "hihat": "ハイハット",
     "ultraHigh": "超高音"
+  },
+  "spectrumExport": {
+    "title": "スペクトラムエクスポート",
+    "export": "エクスポート",
+    "success": "エクスポート成功！",
+    "error": "エクスポート失敗",
+    "noData": "スペクトラムデータがありません"
   }
 }

@@ -231,5 +231,12 @@
     "vocalHigh": "人声中高频",
     "hihat": "镲片",
     "ultraHigh": "极高频"
+  },
+  "spectrumExport": {
+    "title": "频谱导出",
+    "export": "导出",
+    "success": "导出成功！",
+    "error": "导出失败",
+    "noData": "无频谱数据"
   }
 }
