@@ -146,7 +146,8 @@
     "ccw": "反時計回り"
   },
   "3d": {
-    "rotationSpeed": "回転速度"
+    "rotationSpeed": "回転速度",
+    "reset": "ビューをリセット"
   },
   "comparison": {
     "splitView": "スプリットビュー",

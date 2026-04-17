@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
 import { usePlayerStore } from '@/stores/playerStore';
@@ -16,9 +16,37 @@ export function ThreeDSpectrum() {
   const barsRef = useRef<THREE.InstancedMesh[]>([]);
   const animationRef = useRef<number | null>(null);
 
+  // Touch control state
+  const isDraggingRef = useRef(false);
+  const previousTouchRef = useRef({ x: 0, y: 0 });
+  const cameraAngleRef = useRef({ theta: 0, phi: Math.PI / 6 });
+  const cameraDistanceRef = useRef(35);
+  const pinchStartRef = useRef(0);
+
   const visualizationMode = usePlayerStore((s) => s.visualizationMode);
   const source = usePlayerStore((s) => s.source);
   const threeDConfig = usePlayerStore((s) => s.threeDConfig);
+
+  // Update camera position based on touch controls
+  const updateCameraPosition = useCallback(() => {
+    const camera = cameraRef.current;
+    if (!camera) return;
+
+    const { theta, phi } = cameraAngleRef.current;
+    const distance = cameraDistanceRef.current;
+
+    camera.position.x = distance * Math.sin(theta) * Math.cos(phi);
+    camera.position.y = distance * Math.sin(phi);
+    camera.position.z = distance * Math.cos(theta) * Math.cos(phi);
+    camera.lookAt(0, 0, 0);
+  }, []);
+
+  // Reset camera to default position
+  const resetCamera = useCallback(() => {
+    cameraAngleRef.current = { theta: 0, phi: Math.PI / 6 };
+    cameraDistanceRef.current = 35;
+    updateCameraPosition();
+  }, [updateCameraPosition]);
 
   // Initialize Three.js scene
   useEffect(() => {
@@ -27,6 +55,9 @@ export function ThreeDSpectrum() {
     const container = containerRef.current;
     const width = container.clientWidth;
     const height = container.clientHeight;
+
+    // Detect if mobile
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     // Scene
     const scene = new THREE.Scene();
@@ -39,10 +70,14 @@ export function ThreeDSpectrum() {
     camera.lookAt(0, 0, 0);
     cameraRef.current = camera;
 
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Renderer with mobile optimization
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !isMobile, // Disable antialiasing on mobile for performance
+      powerPreference: 'high-performance',
+    });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // Lower pixel ratio on mobile for performance
+    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -60,7 +95,7 @@ export function ThreeDSpectrum() {
     scene.add(gridHelper);
 
     // Create bar geometries for instancing
-    const barCount = 64;
+    const barCount = isMobile ? 32 : 64; // Fewer bars on mobile for performance
     const barWidth = 0.6;
     const barDepth = 0.6;
 
@@ -90,6 +125,119 @@ export function ThreeDSpectrum() {
       scene.add(instancedMesh);
       barsRef.current.push(instancedMesh);
     }
+
+    // Touch event handlers
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        isDraggingRef.current = true;
+        previousTouchRef.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+      } else if (e.touches.length === 2) {
+        // Pinch to zoom start
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        pinchStartRef.current = Math.sqrt(dx * dx + dy * dy);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && isDraggingRef.current) {
+        const deltaX = e.touches[0].clientX - previousTouchRef.current.x;
+        const deltaY = e.touches[0].clientY - previousTouchRef.current.y;
+
+        cameraAngleRef.current.theta -= deltaX * 0.01;
+        cameraAngleRef.current.phi = Math.max(
+          -Math.PI / 4,
+          Math.min(Math.PI / 2, cameraAngleRef.current.phi + deltaY * 0.01)
+        );
+
+        previousTouchRef.current = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY,
+        };
+
+        updateCameraPosition();
+      } else if (e.touches.length === 2) {
+        // Pinch to zoom
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const delta = (pinchStartRef.current - distance) * 0.1;
+
+        cameraDistanceRef.current = Math.max(15, Math.min(60, cameraDistanceRef.current + delta));
+        pinchStartRef.current = distance;
+
+        updateCameraPosition();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      isDraggingRef.current = false;
+    };
+
+    // Mouse controls for desktop
+    let isMouseDown = false;
+    let previousMouse = { x: 0, y: 0 };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isMouseDown = true;
+      previousMouse = { x: e.clientX, y: e.clientY };
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isMouseDown) return;
+
+      const deltaX = e.clientX - previousMouse.x;
+      const deltaY = e.clientY - previousMouse.y;
+
+      cameraAngleRef.current.theta -= deltaX * 0.01;
+      cameraAngleRef.current.phi = Math.max(
+        -Math.PI / 4,
+        Math.min(Math.PI / 2, cameraAngleRef.current.phi + deltaY * 0.01)
+      );
+
+      previousMouse = { x: e.clientX, y: e.clientY };
+      updateCameraPosition();
+    };
+
+    const handleMouseUp = () => {
+      isMouseDown = false;
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      cameraDistanceRef.current = Math.max(
+        15,
+        Math.min(60, cameraDistanceRef.current + e.deltaY * 0.05)
+      );
+      updateCameraPosition();
+    };
+
+    // Double click/tap to reset
+    let lastTap = 0;
+    const handleDoubleClick = () => {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        resetCamera();
+      }
+      lastTap = now;
+    };
+
+    // Add event listeners
+    const canvas = renderer.domElement;
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    canvas.addEventListener('dblclick', handleDoubleClick);
 
     const handleResize = () => {
       if (!container || !camera || !renderer) return;
@@ -121,7 +269,7 @@ export function ThreeDSpectrum() {
         magnitudes = Array.from(snapshot.magnitudes);
       }
 
-      const barCount = 64;
+      const barCount = barsRef.current[0]?.count || 64;
       const step = Math.max(1, Math.floor(magnitudes.length / barCount));
       const sampledMags: number[] = [];
       for (let i = 0; i < barCount; i++) {
@@ -160,10 +308,10 @@ export function ThreeDSpectrum() {
         }
       });
 
-      const radius = 35;
-      camera.position.x = Math.sin(time * threeDConfig.rotationSpeed) * radius;
-      camera.position.z = Math.cos(time * threeDConfig.rotationSpeed) * radius;
-      camera.lookAt(0, 0, 0);
+      // Auto-rotate when not dragging (desktop only, slower on mobile)
+      if (!isDraggingRef.current && !isMobile) {
+        cameraAngleRef.current.theta += 0.002 * threeDConfig.rotationSpeed;
+      }
 
       renderer.render(scene, camera);
     };
@@ -172,6 +320,16 @@ export function ThreeDSpectrum() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseUp);
+      canvas.removeEventListener('wheel', handleWheel);
+      canvas.removeEventListener('dblclick', handleDoubleClick);
+
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -188,7 +346,7 @@ export function ThreeDSpectrum() {
         }
       });
     };
-  }, [visualizationMode, source, threeDConfig]);
+  }, [visualizationMode, source, threeDConfig, updateCameraPosition, resetCamera]);
 
   if (visualizationMode !== '3d') {
     return null;
@@ -197,12 +355,12 @@ export function ThreeDSpectrum() {
   return (
     <div className={styles.container}>
       <div ref={containerRef} className={styles.canvas} />
-      <ThreeDControls />
+      <ThreeDControls onReset={resetCamera} />
     </div>
   );
 }
 
-function ThreeDControls() {
+function ThreeDControls({ onReset }: { onReset: () => void }) {
   const { t } = useTranslation();
   const threeDConfig = usePlayerStore((s) => s.threeDConfig);
   const updateThreeDConfig = usePlayerStore((s) => s.updateThreeDConfig);
@@ -239,6 +397,10 @@ function ThreeDControls() {
           ))}
         </select>
       </div>
+
+      <button className={styles.resetButton} onClick={onReset} title={t('3d.reset')}>
+        ↺
+      </button>
     </div>
   );
 }

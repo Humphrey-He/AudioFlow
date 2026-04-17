@@ -146,7 +146,8 @@
     "ccw": "Counter-clockwise"
   },
   "3d": {
-    "rotationSpeed": "Rotation Speed"
+    "rotationSpeed": "Rotation Speed",
+    "reset": "Reset View"
   },
   "comparison": {
     "splitView": "Split View",
