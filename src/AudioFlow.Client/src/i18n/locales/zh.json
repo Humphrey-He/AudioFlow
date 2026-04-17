@@ -241,6 +241,14 @@
     "error": "导出失败",
     "noData": "无频谱数据"
   },
+  "gradient": {
+    "title": "自定义渐变",
+    "enable": "启用",
+    "low": "低频",
+    "mid": "中频",
+    "high": "高频",
+    "presets": "预设"
+  },
   "mobile": {
     "pinchToZoom": "双指缩放",
     "swipeToScroll": "滑动滚动"

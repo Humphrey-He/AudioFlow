@@ -241,6 +241,14 @@
     "error": "エクスポート失敗",
     "noData": "スペクトラムデータがありません"
   },
+  "gradient": {
+    "title": "カスタムグラデーション",
+    "enable": "有効",
+    "low": "低音",
+    "mid": "中音",
+    "high": "高音",
+    "presets": "プリセット"
+  },
   "mobile": {
     "pinchToZoom": "ピンチでズーム",
     "swipeToScroll": "スワイプでスクロール"

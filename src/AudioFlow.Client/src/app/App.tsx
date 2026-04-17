@@ -15,6 +15,7 @@ import { AudioPlayer } from '@/components/controls/AudioPlayer';
 import { SourceSelector } from '@/components/controls/SourceSelector';
 import { RecordingButton } from '@/components/controls/RecordingButton';
 import { PresetShare } from '@/components/controls/PresetShare';
+import { ColorGradientEditor } from '@/components/controls/ColorGradientEditor';
 import { ControlsPanel } from '@/components/controls/ControlsPanel';
 import { EffectsPanel } from '@/components/controls/EffectsPanel';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -66,6 +67,7 @@ export function App() {
       <AudioPlayer />
       <MobileMenu title={t('menu.settings')}>
         <EffectsPanel />
+        <ColorGradientEditor />
         <ControlsPanel />
       </MobileMenu>
       <StatsPanel />

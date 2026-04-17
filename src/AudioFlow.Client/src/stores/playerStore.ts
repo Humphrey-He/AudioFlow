@@ -27,6 +27,13 @@ export interface ComparisonConfig {
   splitView: 'horizontal' | 'vertical';
 }
 
+export interface CustomGradient {
+  low: string;
+  mid: string;
+  high: string;
+  useCustom: boolean;
+}
+
 interface PlayerState {
   // Playback state
   isPlaying: boolean;
@@ -44,6 +51,7 @@ interface PlayerState {
   polarConfig: PolarConfig;
   threeDConfig: ThreeDConfig;
   comparisonConfig: ComparisonConfig;
+  customGradient: CustomGradient;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -57,6 +65,7 @@ interface PlayerState {
   updatePolarConfig: (config: Partial<PolarConfig>) => void;
   updateThreeDConfig: (config: Partial<ThreeDConfig>) => void;
   updateComparisonConfig: (config: Partial<ComparisonConfig>) => void;
+  updateCustomGradient: (config: Partial<CustomGradient>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -87,6 +96,12 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     showDifference: true,
     splitView: 'horizontal',
   },
+  customGradient: {
+    low: '#38d9a9',
+    mid: '#6c5ce7',
+    high: '#e74c3c',
+    useCustom: false,
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -110,5 +125,9 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   updateComparisonConfig: (config) =>
     set((state) => ({
       comparisonConfig: { ...state.comparisonConfig, ...config },
+    })),
+  updateCustomGradient: (config) =>
+    set((state) => ({
+      customGradient: { ...state.customGradient, ...config },
     })),
 }));

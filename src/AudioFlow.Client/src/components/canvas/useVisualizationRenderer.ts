@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { usePlayerStore } from '@/stores/playerStore';
 import { audioRuntime } from '@/services/audio/audioRuntime';
 import { audioPlayer } from '@/services/audio/audioPlayer';
 import { audioInput } from '@/services/audio/audioInput';
@@ -31,6 +32,12 @@ export function useVisualizationRenderer(
 ) {
   const { mode, source, waterfall: waterfallConfig, polar: polarConfig } = config;
   const effects = useSettingsStore((s) => s.effects);
+  const customGradient = usePlayerStore((s) => s.customGradient);
+
+  // Determine colors to use
+  const colors = customGradient.useCustom
+    ? { low: customGradient.low, mid: customGradient.mid, high: customGradient.high }
+    : { low: '#38d9a9', mid: '#6c5ce7', high: '#e74c3c' };
 
   // Refs for rendering state
   const peakValuesRef = useRef<number[]>(new Array(512).fill(-180));
@@ -41,6 +48,15 @@ export function useVisualizationRenderer(
 
   // Waterfall-specific state
   const waterfallHistoryRef = useRef<number[][]>([]);
+
+  // Helper function to convert hex to rgb
+  const hexToRgb = (hex: string): string => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (result) {
+      return `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
+    }
+    return '56, 217, 169'; // Default green
+  };
 
   const renderSpectrum = useCallback(
     (ctx: CanvasRenderingContext2D, magnitudes: number[], width: number, height: number) => {
@@ -79,7 +95,7 @@ export function useVisualizationRenderer(
           const x = i * barWidth;
 
           const gradient = ctx.createLinearGradient(0, height, 0, height + reflectionHeight);
-          gradient.addColorStop(0, '#38d9a9');
+          gradient.addColorStop(0, colors.low);
           gradient.addColorStop(1, 'transparent');
           ctx.fillStyle = gradient;
           ctx.fillRect(x, height + 10, barWidth - 1, reflectionHeight);
@@ -95,9 +111,9 @@ export function useVisualizationRenderer(
         const x = i * barWidth;
 
         const gradient = ctx.createLinearGradient(0, height, 0, height - barHeight);
-        gradient.addColorStop(0, '#38d9a9');
-        gradient.addColorStop(0.5, '#6c5ce7');
-        gradient.addColorStop(1, '#e74c3c');
+        gradient.addColorStop(0, colors.low);
+        gradient.addColorStop(0.5, colors.mid);
+        gradient.addColorStop(1, colors.high);
         ctx.fillStyle = gradient;
 
         ctx.beginPath();
@@ -108,9 +124,9 @@ export function useVisualizationRenderer(
         if (effects.glow && magnitude > -20) {
           const glowIntensity = Math.min(1, (magnitude + 20) / 40);
           ctx.save();
-          ctx.shadowColor = '#38d9a9';
+          ctx.shadowColor = colors.low;
           ctx.shadowBlur = 15 * glowIntensity;
-          ctx.fillStyle = `rgba(56, 217, 169, ${glowIntensity * 0.8})`;
+          ctx.fillStyle = `rgba(${hexToRgb(colors.low)}, ${glowIntensity * 0.8})`;
           ctx.fillRect(x, height - barHeight, barWidth - 1, 4);
           ctx.restore();
         }
@@ -153,9 +169,9 @@ export function useVisualizationRenderer(
       // Center line
       if (effects.centerLine) {
         ctx.save();
-        ctx.strokeStyle = 'rgba(108, 92, 231, 0.6)';
+        ctx.strokeStyle = `rgba(${hexToRgb(colors.mid)}, 0.6)`;
         ctx.lineWidth = 2;
-        ctx.shadowColor = '#6c5ce7';
+        ctx.shadowColor = colors.mid;
         ctx.shadowBlur = 10;
         ctx.beginPath();
 
@@ -287,9 +303,9 @@ export function useVisualizationRenderer(
       ctx.stroke();
 
       // Draw waveform
-      ctx.strokeStyle = '#38d9a9';
+      ctx.strokeStyle = colors.low;
       ctx.lineWidth = 2;
-      ctx.shadowColor = '#38d9a9';
+      ctx.shadowColor = colors.low;
       ctx.shadowBlur = 10;
       ctx.beginPath();
 
@@ -392,9 +408,9 @@ export function useVisualizationRenderer(
 
         // Create gradient for bar
         const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-        gradient.addColorStop(0, '#38d9a9');
-        gradient.addColorStop(0.5, '#6c5ce7');
-        gradient.addColorStop(1, '#e74c3c');
+        gradient.addColorStop(0, colors.low);
+        gradient.addColorStop(0.5, colors.mid);
+        gradient.addColorStop(1, colors.high);
 
         ctx.strokeStyle = gradient;
         ctx.lineWidth = Math.max(1, (angleRange * minRadius) / barCount - 1);
@@ -408,9 +424,9 @@ export function useVisualizationRenderer(
         // Glow effect for high energy
         if (effects.glow && normalized > 0.7) {
           ctx.save();
-          ctx.shadowColor = '#38d9a9';
+          ctx.shadowColor = colors.low;
           ctx.shadowBlur = 15;
-          ctx.strokeStyle = `rgba(56, 217, 169, ${normalized * 0.5})`;
+          ctx.strokeStyle = `rgba(${hexToRgb(colors.low)}, ${normalized * 0.5})`;
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
@@ -425,8 +441,8 @@ export function useVisualizationRenderer(
         centerX, centerY, 0,
         centerX, centerY, energyRadius
       );
-      energyGradient.addColorStop(0, `rgba(56, 217, 169, ${avgEnergy * 0.8})`);
-      energyGradient.addColorStop(1, 'rgba(56, 217, 169, 0.1)');
+      energyGradient.addColorStop(0, `rgba(${hexToRgb(colors.low)}, ${avgEnergy * 0.8})`);
+      energyGradient.addColorStop(1, `rgba(${hexToRgb(colors.low)}, 0.1)`);
 
       ctx.fillStyle = energyGradient;
       ctx.beginPath();
@@ -434,7 +450,7 @@ export function useVisualizationRenderer(
       ctx.fill();
 
       // Center text
-      ctx.fillStyle = '#38d9a9';
+      ctx.fillStyle = colors.low;
       ctx.font = '12px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
