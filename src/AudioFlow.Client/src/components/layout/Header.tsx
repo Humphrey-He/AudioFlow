@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { useSettingsStore } from '@/stores/settingsStore';
 import { useUiStore } from '@/stores/uiStore';
 import { HelpPanel } from './HelpPanel';
 import { ScreenshotButton } from '../controls/ScreenshotButton';

@@ -1,0 +1,135 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  min-width: 200px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.startButton,
+.stopButton,
+.resetButton,
+.exportButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.startButton {
+  background: #38d9a9;
+  color: #0a0a0f;
+}
+
+.startButton:hover {
+  background: #2cb89a;
+}
+
+.stopButton {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.stopButton:hover {
+  background: #c0392b;
+}
+
+.resetButton {
+  background: #2a2a4e;
+  color: #888;
+}
+
+.resetButton:hover {
+  background: #3a3a5e;
+  color: #fff;
+}
+
+.exportButton {
+  background: #6c5ce7;
+  color: #fff;
+}
+
+.exportButton:hover:not(:disabled) {
+  background: #5a4bc7;
+}
+
+.exportButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: #0a0a15;
+  border-radius: 4px;
+}
+
+.label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: monospace;
+  color: #fff;
+}
+
+.time {
+  font-size: 10px;
+  color: #666;
+  font-family: monospace;
+}
+
+.recording {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #e74c3c;
+}
+
+.recordingDot {
+  width: 6px;
+  height: 6px;
+  background: #e74c3c;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

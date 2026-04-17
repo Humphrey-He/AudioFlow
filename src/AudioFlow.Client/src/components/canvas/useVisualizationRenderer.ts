@@ -2,26 +2,34 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { audioRuntime } from '@/services/audio/audioRuntime';
 import { audioPlayer } from '@/services/audio/audioPlayer';
+import { audioInput } from '@/services/audio/audioInput';
 import { colorSchemes, type VisualizationMode } from '@/types/visualization';
 
 interface RendererConfig {
   mode: VisualizationMode;
+  source: 'system' | 'microphone' | 'file';
   waterfall: {
     frameCount: number;
     decay: number;
     colorScheme: 'fire' | 'aurora' | 'tech' | 'ocean';
   };
+  polar: {
+    type: 'full' | 'half';
+    direction: 'cw' | 'ccw';
+    minRadius: number;
+    maxRadius: number;
+  };
 }
 
 /**
  * Unified renderer for all visualization modes
- * Supports: spectrum, waterfall, waveform
+ * Supports: spectrum, waterfall, waveform, polar
  */
 export function useVisualizationRenderer(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   config: RendererConfig
 ) {
-  const { mode, waterfall: waterfallConfig } = config;
+  const { mode, source, waterfall: waterfallConfig, polar: polarConfig } = config;
   const effects = useSettingsStore((s) => s.effects);
 
   // Refs for rendering state
@@ -322,6 +330,142 @@ export function useVisualizationRenderer(
     []
   );
 
+  const renderPolar = useCallback(
+    (ctx: CanvasRenderingContext2D, magnitudes: number[], width: number, height: number) => {
+      const { type, direction, minRadius, maxRadius } = polarConfig;
+      const mags = magnitudes;
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      // Background
+      ctx.fillStyle = '#0a0a0f';
+      ctx.fillRect(0, 0, width, height);
+
+      const barCount = mags.length;
+      const angleRange = type === 'full' ? Math.PI * 2 : Math.PI;
+      const startAngle = type === 'full' ? 0 : -Math.PI / 2;
+
+      // Calculate total energy for center display
+      let totalEnergy = 0;
+      for (let i = 0; i < barCount; i++) {
+        totalEnergy += Math.max(0, (mags[i] + 60) / 60);
+      }
+      const avgEnergy = totalEnergy / barCount;
+
+      // Draw grid circles
+      ctx.strokeStyle = '#2a2a3a';
+      ctx.lineWidth = 1;
+      for (let r = minRadius; r <= maxRadius; r += 20) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Draw radial lines
+      const radialLines = 8;
+      for (let i = 0; i < radialLines; i++) {
+        const angle = startAngle + (Math.PI * 2 * i) / radialLines;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(
+          centerX + Math.cos(angle) * maxRadius,
+          centerY + Math.sin(angle) * maxRadius
+        );
+        ctx.stroke();
+      }
+
+      // Draw frequency bars in polar coordinates
+      for (let i = 0; i < barCount; i++) {
+        const normalized = Math.max(0, (mags[i] + 60) / 60);
+        const barLength = normalized * (maxRadius - minRadius);
+
+        // Map frequency index to angle
+        let angle = startAngle + (i / barCount) * angleRange;
+        if (direction === 'ccw') {
+          angle = startAngle + angleRange - (i / barCount) * angleRange;
+        }
+
+        const x1 = centerX + Math.cos(angle) * minRadius;
+        const y1 = centerY + Math.sin(angle) * minRadius;
+        const x2 = centerX + Math.cos(angle) * (minRadius + barLength);
+        const y2 = centerY + Math.sin(angle) * (minRadius + barLength);
+
+        // Create gradient for bar
+        const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+        gradient.addColorStop(0, '#38d9a9');
+        gradient.addColorStop(0.5, '#6c5ce7');
+        gradient.addColorStop(1, '#e74c3c');
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = Math.max(1, (angleRange * minRadius) / barCount - 1);
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // Glow effect for high energy
+        if (effects.glow && normalized > 0.7) {
+          ctx.save();
+          ctx.shadowColor = '#38d9a9';
+          ctx.shadowBlur = 15;
+          ctx.strokeStyle = `rgba(56, 217, 169, ${normalized * 0.5})`;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      // Center circle with energy
+      const energyRadius = minRadius * 0.8;
+      const energyGradient = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, energyRadius
+      );
+      energyGradient.addColorStop(0, `rgba(56, 217, 169, ${avgEnergy * 0.8})`);
+      energyGradient.addColorStop(1, 'rgba(56, 217, 169, 0.1)');
+
+      ctx.fillStyle = energyGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, energyRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Center text
+      ctx.fillStyle = '#38d9a9';
+      ctx.font = '12px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(
+        `${Math.round(avgEnergy * 100)}%`,
+        centerX,
+        centerY
+      );
+
+      // Frequency labels
+      ctx.fillStyle = '#666';
+      ctx.font = '9px monospace';
+      const labels = ['20Hz', '1kHz', '10kHz'];
+      const labelAngles = type === 'full'
+        ? [startAngle, startAngle + angleRange * 0.35, startAngle + angleRange * 0.65]
+        : [startAngle, startAngle + angleRange * 0.5, startAngle + angleRange];
+
+      labels.forEach((label, idx) => {
+        const angle = labelAngles[idx];
+        const labelRadius = maxRadius + 15;
+        const lx = centerX + Math.cos(angle) * labelRadius;
+        const ly = centerY + Math.sin(angle) * labelRadius;
+        ctx.textAlign = 'center';
+        ctx.fillText(label, lx, ly);
+      });
+
+      ctx.textAlign = 'start';
+    },
+    [polarConfig, effects]
+  );
+
   const drawFrame = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -347,26 +491,37 @@ export function useVisualizationRenderer(
     let magnitudes: number[] = [];
 
     if (mode === 'waveform') {
-      const timeData = audioPlayer.getTimeDomainData();
+      let timeData: Uint8Array;
+      if (source === 'file' && audioPlayer.getFileName()) {
+        timeData = audioPlayer.getTimeDomainData();
+      } else if (source === 'microphone' && audioInput.getIsActive()) {
+        timeData = audioInput.getTimeDomainData();
+      } else {
+        timeData = audioPlayer.getTimeDomainData(); // fallback
+      }
       renderWaveform(ctx, timeData, width, height);
       return;
     }
 
-    // For spectrum and waterfall, get frequency data
-    if (mode === 'spectrum' || mode === 'waterfall') {
-      // Try audio player first (for file playback)
-      if (audioPlayer.getFileName()) {
+    // For spectrum, waterfall, and polar, get frequency data
+    if (mode === 'spectrum' || mode === 'waterfall' || mode === 'polar') {
+      // Determine data source based on selection
+      if (source === 'file' && audioPlayer.getFileName()) {
         magnitudes = Array.from(audioPlayer.getFrequencyData()).map((v) => {
           // Convert 0-255 to dB scale
           return v > 0 ? 20 * Math.log10(v / 255) : -180;
         });
+      } else if (source === 'microphone' && audioInput.getIsActive()) {
+        magnitudes = Array.from(audioInput.getFrequencyData()).map((v) => {
+          return v > 0 ? 20 * Math.log10(v / 255) : -180;
+        });
       } else {
-        // Fall back to runtime data
+        // System audio via WebSocket
         const snapshot = audioRuntime.getSnapshot();
         magnitudes = Array.from(snapshot.magnitudes);
       }
 
-      if (mags.length === 0 || mags.every((m) => m === 0)) {
+      if (magnitudes.length === 0 || magnitudes.every((m) => m === 0)) {
         // Placeholder
         ctx.fillStyle = '#2a2a3a';
         for (let i = 0; i < 60; i++) {
@@ -379,11 +534,13 @@ export function useVisualizationRenderer(
 
       if (mode === 'waterfall') {
         renderWaterfall(ctx, magnitudes, width, height);
+      } else if (mode === 'polar') {
+        renderPolar(ctx, magnitudes, width, height);
       } else {
         renderSpectrum(ctx, magnitudes, width, height);
       }
     }
-  }, [mode, canvasRef, renderSpectrum, renderWaterfall, renderWaveform]);
+  }, [mode, source, canvasRef, renderSpectrum, renderWaterfall, renderWaveform, renderPolar]);
 
   useEffect(() => {
     let animationId: number;

@@ -45,6 +45,14 @@
     "centerLine": "中心线",
     "centerLineTooltip": "绘制连接条形中点的平滑曲线。显示整体频谱形状。"
   },
+  "frequency": {
+    "title": "频率隔离",
+    "all": "全部",
+    "bass": "低音",
+    "vocal": "人声",
+    "mid": "中音",
+    "high": "高音"
+  },
   "preset": {
     "title": "效果预设",
     "default": "默认 - 适合一般使用",
@@ -52,6 +60,11 @@
     "vivid": "炫彩 - 演示用最大视觉效果",
     "minimal": "简约 - 低功耗设备的最小效果",
     "custom": "自定义 - 您的自定义配置"
+  },
+  "menu": {
+    "analysis": "分析",
+    "tools": "工具",
+    "settings": "设置"
   },
   "stats": {
     "frame": "帧",
@@ -97,6 +110,13 @@
     "mid": "中频 (200Hz-4kHz) - 人声、吉他、大多数乐器",
     "high": "高频 (4kHz-20kHz) - 钹帽、踩镲、泛音"
   },
+  "source": {
+    "system": "系统",
+    "microphone": "麦克风",
+    "file": "文件",
+    "activating": "启动中",
+    "micError": "无法访问麦克风"
+  },
   "player": {
     "upload": "上传",
     "play": "播放",
@@ -108,9 +128,29 @@
     "spectrum": "频谱",
     "waterfall": "瀑布图",
     "waveform": "波形",
+    "polar": "环形",
+    "3d": "3D",
+    "comparison": "对比",
     "frames": "帧数",
     "decay": "衰减",
     "colorScheme": "配色"
+  },
+  "polar": {
+    "type": "类型",
+    "full": "全圆",
+    "half": "半圆",
+    "direction": "方向",
+    "cw": "顺时针",
+    "ccw": "逆时针"
+  },
+  "3d": {
+    "rotationSpeed": "旋转速度"
+  },
+  "comparison": {
+    "splitView": "分屏视图",
+    "horizontal": "水平",
+    "vertical": "垂直",
+    "showDiff": "显示差异"
   },
   "colorScheme": {
     "fire": "火焰",
@@ -123,5 +163,31 @@
     "preview": "截图预览",
     "download": "下载",
     "copy": "复制到剪贴板"
+  },
+  "recording": {
+    "start": "开始录制",
+    "stop": "停止录制",
+    "processing": "处理中...",
+    "noCanvas": "未找到画布",
+    "error": "录制失败"
+  },
+  "peakStats": {
+    "title": "峰值统计",
+    "start": "开始采集",
+    "stop": "停止",
+    "max": "最大峰值",
+    "min": "最小峰值",
+    "avg": "平均值",
+    "samples": "采样数",
+    "recording": "采集中..."
+  },
+  "presetShare": {
+    "export": "导出",
+    "import": "导入",
+    "copyLink": "分享链接",
+    "copied": "链接已复制到剪贴板！",
+    "imported": "预设导入成功！",
+    "invalid": "无效的预设格式",
+    "pasteJson": "在此粘贴预设JSON..."
   }
 }

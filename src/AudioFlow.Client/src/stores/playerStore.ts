@@ -9,6 +9,24 @@ export interface WaterfallConfig {
   colorScheme: ColorScheme;
 }
 
+export interface PolarConfig {
+  type: 'full' | 'half';
+  direction: 'cw' | 'ccw';
+  minRadius: number;
+  maxRadius: number;
+}
+
+export interface ThreeDConfig {
+  rotationSpeed: number;
+  barSpacing: number;
+  colorScheme: ColorScheme;
+}
+
+export interface ComparisonConfig {
+  showDifference: boolean;
+  splitView: 'horizontal' | 'vertical';
+}
+
 interface PlayerState {
   // Playback state
   isPlaying: boolean;
@@ -23,6 +41,9 @@ interface PlayerState {
   // Visualization
   visualizationMode: VisualizationMode;
   waterfallConfig: WaterfallConfig;
+  polarConfig: PolarConfig;
+  threeDConfig: ThreeDConfig;
+  comparisonConfig: ComparisonConfig;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -33,6 +54,9 @@ interface PlayerState {
   setSource: (source: 'system' | 'microphone' | 'file') => void;
   setVisualizationMode: (mode: VisualizationMode) => void;
   updateWaterfallConfig: (config: Partial<WaterfallConfig>) => void;
+  updatePolarConfig: (config: Partial<PolarConfig>) => void;
+  updateThreeDConfig: (config: Partial<ThreeDConfig>) => void;
+  updateComparisonConfig: (config: Partial<ComparisonConfig>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -48,6 +72,21 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     decay: 0.92,
     colorScheme: 'fire',
   },
+  polarConfig: {
+    type: 'full',
+    direction: 'cw',
+    minRadius: 50,
+    maxRadius: 120,
+  },
+  threeDConfig: {
+    rotationSpeed: 0.5,
+    barSpacing: 0.2,
+    colorScheme: 'fire',
+  },
+  comparisonConfig: {
+    showDifference: true,
+    splitView: 'horizontal',
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -59,5 +98,17 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   updateWaterfallConfig: (config) =>
     set((state) => ({
       waterfallConfig: { ...state.waterfallConfig, ...config },
+    })),
+  updatePolarConfig: (config) =>
+    set((state) => ({
+      polarConfig: { ...state.polarConfig, ...config },
+    })),
+  updateThreeDConfig: (config) =>
+    set((state) => ({
+      threeDConfig: { ...state.threeDConfig, ...config },
+    })),
+  updateComparisonConfig: (config) =>
+    set((state) => ({
+      comparisonConfig: { ...state.comparisonConfig, ...config },
     })),
 }));

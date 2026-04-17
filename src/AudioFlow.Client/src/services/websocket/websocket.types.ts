@@ -7,7 +7,7 @@ export interface WebSocketService {
   send(data: unknown): void;
   subscribe(
     event: 'message' | 'status' | 'error',
-    listener: (data: IncomingMessage | ConnectionStatus | string) => void
+    listener: (data: IncomingMessage | ConnectionStatus) => void
   ): () => void;
   getStatus(): ConnectionStatus;
 }

@@ -57,16 +57,19 @@ export class SettingsSyncController {
 
       // Subscribe to ack
       const unsubscribe = websocketService.subscribe('message', (data) => {
-        if (data.type === 'settings_ack' && data.requestId === requestId) {
-          unsubscribe();
-          const pending = this.pendingRequests.get(requestId);
-          if (pending) {
-            clearTimeout(pending.timeout);
-            this.pendingRequests.delete(requestId);
-            if (data.success) {
-              pending.resolve();
-            } else {
-              pending.reject(new Error('Server rejected settings'));
+        if (typeof data === 'object' && data !== null && 'type' in data && (data as { type: string }).type === 'settings_ack') {
+          const msg = data as { requestId: string; success: boolean };
+          if (msg.requestId === requestId) {
+            unsubscribe();
+            const pending = this.pendingRequests.get(requestId);
+            if (pending) {
+              clearTimeout(pending.timeout);
+              this.pendingRequests.delete(requestId);
+              if (msg.success) {
+                pending.resolve();
+              } else {
+                pending.reject(new Error('Server rejected settings'));
+              }
             }
           }
         }

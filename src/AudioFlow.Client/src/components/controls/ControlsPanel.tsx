@@ -3,7 +3,7 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import styles from './ControlsPanel.module.css';
 
 export function ControlsPanel() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const audio = useSettingsStore((s) => s.audio);
   const updateAudioSetting = useSettingsStore((s) => s.updateAudioSetting);
 

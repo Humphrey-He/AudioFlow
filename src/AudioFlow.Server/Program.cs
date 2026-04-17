@@ -70,6 +70,7 @@ app.MapGet("/ws", async (HttpContext context) =>
 
             var data = new
             {
+                type = "spectrum_frame",
                 frame = frameCount++,
                 timestamp = DateTime.UtcNow.ToString("O"),
                 magnitudes = magnitudes.Select(m => Math.Round(m, 1)).ToArray()

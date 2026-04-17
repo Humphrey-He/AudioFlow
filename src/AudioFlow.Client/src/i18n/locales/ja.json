@@ -45,6 +45,14 @@
     "centerLine": "センターバランス",
     "centerLineTooltip": "バーの中間点を結ぶスムーズなカーブを描画。全体的なスペクトル形状を表示。"
   },
+  "frequency": {
+    "title": "周波数アイソレーション",
+    "all": "全て",
+    "bass": "低音",
+    "vocal": "ボーカル",
+    "mid": "中音",
+    "high": "高音"
+  },
   "preset": {
     "title": "エフェクトプリセット",
     "default": "デフォルト - 一般的な使用に最適",
@@ -52,6 +60,11 @@
     "vivid": "ビビッド - デモ用最大視覚効果",
     "minimal": "ミニマル - 低電力デバイスの最小エフェクト",
     "custom": "カスタム - カスタム設定"
+  },
+  "menu": {
+    "analysis": "分析",
+    "tools": "ツール",
+    "settings": "設定"
   },
   "stats": {
     "frame": "フレーム",
@@ -97,6 +110,13 @@
     "mid": "中音 (200Hz-4kHz) - ボーカル、ギター、ほとんど楽器",
     "high": "高音 (4kHz-20kHz) - シンバル、ハイハット、ハーモニクス"
   },
+  "source": {
+    "system": "システム",
+    "microphone": "マイク",
+    "file": "ファイル",
+    "activating": "起動中",
+    "micError": "マイクにアクセスできません"
+  },
   "player": {
     "upload": "アップロード",
     "play": "再生",
@@ -108,9 +128,29 @@
     "spectrum": "スペクトラム",
     "waterfall": "ウォーターフォール",
     "waveform": "波形",
+    "polar": "ポーラー",
+    "3d": "3D",
+    "comparison": "比較",
     "frames": "フレーム数",
     "decay": "減衰",
     "colorScheme": "カラー"
+  },
+  "polar": {
+    "type": "タイプ",
+    "full": "フルサークル",
+    "half": "ハーフサークル",
+    "direction": "方向",
+    "cw": "時計回り",
+    "ccw": "反時計回り"
+  },
+  "3d": {
+    "rotationSpeed": "回転速度"
+  },
+  "comparison": {
+    "splitView": "スプリットビュー",
+    "horizontal": "水平",
+    "vertical": "垂直",
+    "showDiff": "差分を表示"
   },
   "colorScheme": {
     "fire": "ファイア",
@@ -123,5 +163,31 @@
     "preview": "プレビュー",
     "download": "ダウンロード",
     "copy": "クリップボードにコピー"
+  },
+  "recording": {
+    "start": "録画開始",
+    "stop": "録画停止",
+    "processing": "処理中...",
+    "noCanvas": "キャンバスが見つかりません",
+    "error": "録画に失敗しました"
+  },
+  "peakStats": {
+    "title": "ピーク統計",
+    "start": "収集開始",
+    "stop": "停止",
+    "max": "最大ピーク",
+    "min": "最小ピーク",
+    "avg": "平均",
+    "samples": "サンプル数",
+    "recording": "収集中..."
+  },
+  "presetShare": {
+    "export": "エクスポート",
+    "import": "インポート",
+    "copyLink": "リンクをコピー",
+    "copied": "リンクをクリップボードにコピーしました！",
+    "imported": "プリセットをインポートしました！",
+    "invalid": "無効なプリセット形式",
+    "pasteJson": "ここにプリセットJSONを貼り付け..."
   }
 }

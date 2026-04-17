@@ -12,3 +12,29 @@
   padding: 30px;
   border: 1px solid var(--color-border);
 }
+
+/* Tablet */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+  }
+
+  .canvas {
+    height: 250px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+
+  .canvas {
+    height: 200px;
+  }
+}

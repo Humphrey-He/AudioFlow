@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { audioRuntime, type AudioStats } from '@/services/audio/audioRuntime';
 import { websocketService } from '@/services/websocket/websocketService';
 import { useConnectionStore } from '@/stores/connectionStore';
@@ -20,14 +20,17 @@ export function useAudioRuntime(): AudioStats {
 
   useEffect(() => {
     // Handle incoming messages - only update stats for UI
-    const unsubscribeMessage = websocketService.subscribe('message', (data: IncomingMessage) => {
-      if (data.type === 'spectrum_frame') {
-        // Update stats for UI components (StatsPanel)
-        // But magnitudes go directly to runtime for renderer
-        const snapshot = audioRuntime.getSnapshot();
-        setStats({ ...snapshot.stats });
-      } else if (data.type === 'error') {
-        setError(data.message);
+    const unsubscribeMessage = websocketService.subscribe('message', (data) => {
+      if (typeof data === 'object' && data !== null && 'type' in data) {
+        const msg = data as IncomingMessage;
+        if (msg.type === 'spectrum_frame') {
+          // Update stats for UI components (StatsPanel)
+          // But magnitudes go directly to runtime for renderer
+          const snapshot = audioRuntime.getSnapshot();
+          setStats({ ...snapshot.stats });
+        } else if (msg.type === 'error') {
+          setError((msg as { message: string }).message);
+        }
       }
     });
 

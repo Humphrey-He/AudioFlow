@@ -2,6 +2,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .error {
@@ -16,4 +19,33 @@
 
 .error.visible {
   display: block;
+}
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+  .app {
+    padding: 16px;
+    gap: 10px;
+  }
+}
+
+/* Mobile landscape */
+@media (max-width: 768px) {
+  .app {
+    padding: 12px;
+    gap: 8px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .app {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .error {
+    padding: 12px;
+    font-size: 13px;
+  }
 }

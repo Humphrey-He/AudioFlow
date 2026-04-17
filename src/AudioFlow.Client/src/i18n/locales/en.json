@@ -45,6 +45,14 @@
     "centerLine": "Center Line",
     "centerLineTooltip": "Draw smooth curve connecting bar midpoints. Shows overall spectral shape."
   },
+  "frequency": {
+    "title": "Frequency Isolation",
+    "all": "All",
+    "bass": "Bass",
+    "vocal": "Vocal",
+    "mid": "Mid",
+    "high": "High"
+  },
   "preset": {
     "title": "Effect Presets",
     "default": "Default - Balanced for general use",
@@ -52,6 +60,11 @@
     "vivid": "Vivid - Maximum visual effects for demonstration",
     "minimal": "Minimal - Minimal effects for low-power devices",
     "custom": "Custom - Your own configuration"
+  },
+  "menu": {
+    "analysis": "Analysis",
+    "tools": "Tools",
+    "settings": "Settings"
   },
   "stats": {
     "frame": "Frame",
@@ -97,6 +110,13 @@
     "mid": "Mid (200Hz-4kHz) - Vocals, guitars, most instruments",
     "high": "High (4kHz-20kHz) - Cymbals, hi-hats, harmonics"
   },
+  "source": {
+    "system": "System",
+    "microphone": "Mic",
+    "file": "File",
+    "activating": "Activating",
+    "micError": "Failed to access microphone"
+  },
   "player": {
     "upload": "Upload",
     "play": "Play",
@@ -108,9 +128,29 @@
     "spectrum": "Spectrum",
     "waterfall": "Waterfall",
     "waveform": "Waveform",
+    "polar": "Polar",
+    "3d": "3D",
+    "comparison": "Compare",
     "frames": "Frames",
     "decay": "Decay",
     "colorScheme": "Color"
+  },
+  "polar": {
+    "type": "Type",
+    "full": "Full Circle",
+    "half": "Half Circle",
+    "direction": "Direction",
+    "cw": "Clockwise",
+    "ccw": "Counter-clockwise"
+  },
+  "3d": {
+    "rotationSpeed": "Rotation Speed"
+  },
+  "comparison": {
+    "splitView": "Split View",
+    "horizontal": "Horizontal",
+    "vertical": "Vertical",
+    "showDiff": "Show Difference"
   },
   "colorScheme": {
     "fire": "Fire",
@@ -123,5 +163,31 @@
     "preview": "Screenshot Preview",
     "download": "Download",
     "copy": "Copy to Clipboard"
+  },
+  "recording": {
+    "start": "Start Recording",
+    "stop": "Stop Recording",
+    "processing": "Processing...",
+    "noCanvas": "Canvas not found",
+    "error": "Recording failed"
+  },
+  "peakStats": {
+    "title": "Peak Statistics",
+    "start": "Start Collecting",
+    "stop": "Stop",
+    "max": "Max Peak",
+    "min": "Min Peak",
+    "avg": "Average",
+    "samples": "Samples",
+    "recording": "Collecting..."
+  },
+  "presetShare": {
+    "export": "Export",
+    "import": "Import",
+    "copyLink": "Share Link",
+    "copied": "Link copied to clipboard!",
+    "imported": "Preset imported successfully!",
+    "invalid": "Invalid preset format",
+    "pasteJson": "Paste preset JSON here..."
   }
 }

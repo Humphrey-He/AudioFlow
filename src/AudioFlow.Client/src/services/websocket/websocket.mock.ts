@@ -1,12 +1,14 @@
 import type { WebSocketService } from './websocket.types';
-import type { ConnectionStatus, SpectrumFrame } from '@/types/common';
+import type { ConnectionStatus } from '@/types/common';
+import type { IncomingMessage } from './protocol';
+import type { SpectrumFrame } from './protocol';
 
 /**
  * MockWebSocketService - generates fake spectrum data for development.
  * Phase 1: This allows frontend to work without backend connection.
  */
 export class MockWebSocketService implements WebSocketService {
-  private listeners: Map<string, Set<(data: unknown) => void>> = new Map();
+  private listeners: Map<string, Set<(data: IncomingMessage | ConnectionStatus) => void>> = new Map();
   private status: ConnectionStatus = 'disconnected';
   private timer: ReturnType<typeof setInterval> | null = null;
   private frameCount = 0;
@@ -30,7 +32,7 @@ export class MockWebSocketService implements WebSocketService {
 
   subscribe(
     event: 'message' | 'status' | 'error',
-    listener: (data: SpectrumFrame | ConnectionStatus | string) => void
+    listener: (data: IncomingMessage | ConnectionStatus) => void
   ): () => void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
@@ -48,7 +50,7 @@ export class MockWebSocketService implements WebSocketService {
     this.emit('status', status);
   }
 
-  private emit(event: string, data: unknown): void {
+  private emit(event: string, data: IncomingMessage | ConnectionStatus): void {
     this.listeners.get(event)?.forEach((listener) => listener(data));
   }
 
@@ -56,6 +58,7 @@ export class MockWebSocketService implements WebSocketService {
     this.timer = setInterval(() => {
       const magnitudes = this.generateMockMagnitudes();
       const frame: SpectrumFrame = {
+        type: 'spectrum_frame',
         frame: this.frameCount++,
         timestamp: new Date().toISOString(),
         magnitudes,

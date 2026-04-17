@@ -20,7 +20,7 @@ export function useSpectrumRenderer({ effects, canvasRef }: RendererOptions) {
   const peakHoldTimesRef = useRef<number[]>(new Array(512).fill(0));
   const lowFreqEnergyRef = useRef(0);
   const pulsePhaseRef = useRef(0);
-  const fpsRef = useRef(0);
+  const fpsRef = useRef<{ count: number; lastTime: number; fps: number }>({ count: 0, lastTime: 0, fps: 0 });
 
   const drawFrame = useCallback(() => {
     const canvas = canvasRef.current;

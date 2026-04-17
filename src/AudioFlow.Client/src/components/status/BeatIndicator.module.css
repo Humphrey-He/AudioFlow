@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  transition: all 0.1s;
+}
+
+.indicator.onBeat {
+  background: #e74c3c;
+  transform: scale(1.05);
+}
+
+.bpm {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: monospace;
+  color: #fff;
+}
+
+.label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.confidence {
+  width: 40px;
+  height: 4px;
+  background: #2a2a3a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidenceBar {
+  display: block;
+  height: 100%;
+  background: #38d9a9;
+  transition: width 0.2s;
+}

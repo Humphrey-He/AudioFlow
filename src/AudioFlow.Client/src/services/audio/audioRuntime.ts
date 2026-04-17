@@ -42,9 +42,6 @@ export class AudioRuntime {
   // Subscribers for UI updates (low frequency)
   private listeners: Set<(runtime: AudioRuntime) => void> = new Set();
 
-  // For FPS calculation
-  private lastFrameTime: number = performance.now();
-
   constructor(binCount: number = DEFAULT_BIN_COUNT) {
     this.magnitudesBuffer = new Float32Array(binCount);
   }

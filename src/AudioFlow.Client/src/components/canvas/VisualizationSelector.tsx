@@ -13,6 +13,9 @@ export function VisualizationSelector() {
     { key: 'spectrum', label: t('visualization.spectrum') },
     { key: 'waterfall', label: t('visualization.waterfall') },
     { key: 'waveform', label: t('visualization.waveform') },
+    { key: 'polar', label: t('visualization.polar') },
+    { key: '3d', label: t('visualization.3d') },
+    { key: 'comparison', label: t('visualization.comparison') },
   ];
 
   return (
@@ -30,6 +33,7 @@ export function VisualizationSelector() {
       </div>
 
       {visualizationMode === 'waterfall' && <WaterfallControls />}
+      {visualizationMode === 'polar' && <PolarControls />}
     </div>
   );
 }
@@ -82,6 +86,40 @@ function WaterfallControls() {
               {t(`colorScheme.${key}`)}
             </option>
           ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+function PolarControls() {
+  const { t } = useTranslation();
+  const polarConfig = usePlayerStore((s) => s.polarConfig);
+  const updatePolarConfig = usePlayerStore((s) => s.updatePolarConfig);
+
+  return (
+    <div className={styles.waterfallControls}>
+      <div className={styles.controlGroup}>
+        <span className={styles.controlLabel}>{t('polar.type')}</span>
+        <select
+          className={styles.controlSelect}
+          value={polarConfig.type}
+          onChange={(e) => updatePolarConfig({ type: e.target.value as 'full' | 'half' })}
+        >
+          <option value="full">{t('polar.full')}</option>
+          <option value="half">{t('polar.half')}</option>
+        </select>
+      </div>
+
+      <div className={styles.controlGroup}>
+        <span className={styles.controlLabel}>{t('polar.direction')}</span>
+        <select
+          className={styles.controlSelect}
+          value={polarConfig.direction}
+          onChange={(e) => updatePolarConfig({ direction: e.target.value as 'cw' | 'ccw' })}
+        >
+          <option value="cw">{t('polar.cw')}</option>
+          <option value="ccw">{t('polar.ccw')}</option>
         </select>
       </div>
     </div>

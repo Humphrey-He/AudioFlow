@@ -14,7 +14,6 @@ export function AudioPlayer() {
     duration,
     fileName,
     volume,
-    source,
     setPlaying,
     setCurrentTime,
     setDuration,

@@ -1,4 +1,4 @@
-export type VisualizationMode = 'spectrum' | 'waterfall' | 'waveform';
+export type VisualizationMode = 'spectrum' | 'waterfall' | 'waveform' | 'polar' | '3d' | 'comparison';
 
 export interface VisualizationConfig {
   mode: VisualizationMode;
@@ -10,6 +10,21 @@ export interface VisualizationConfig {
   waveform: {
     lineWidth: number;
     strokeStyle: string;
+  };
+  polar: {
+    type: 'full' | 'half';
+    direction: 'cw' | 'ccw';
+    minRadius: number;
+    maxRadius: number;
+  };
+  threeD: {
+    rotationSpeed: number;
+    barSpacing: number;
+    colorScheme: 'fire' | 'aurora' | 'tech' | 'ocean';
+  };
+  comparison: {
+    showDifference: boolean;
+    splitView: 'horizontal' | 'vertical';
   };
 }
 
@@ -23,6 +38,21 @@ export const defaultVisualizationConfig: VisualizationConfig = {
   waveform: {
     lineWidth: 2,
     strokeStyle: '#38d9a9',
+  },
+  polar: {
+    type: 'full',
+    direction: 'cw',
+    minRadius: 50,
+    maxRadius: 120,
+  },
+  threeD: {
+    rotationSpeed: 0.5,
+    barSpacing: 0.2,
+    colorScheme: 'fire',
+  },
+  comparison: {
+    showDifference: true,
+    splitView: 'horizontal',
   },
 };
 

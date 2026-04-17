@@ -2,12 +2,15 @@ import { create } from 'zustand';
 import type { AudioSettings } from '@/types/common';
 import { settingsSyncController } from '@/services/audio/settingsSyncController';
 
-interface EffectsState {
+export type FrequencyRange = 'all' | 'bass' | 'vocal' | 'mid' | 'high';
+
+export interface EffectsState {
   glow: boolean;
   reflection: boolean;
   peak: boolean;
   pulse: boolean;
   centerLine: boolean;
+  frequencyRange: FrequencyRange;
 }
 
 export interface SettingsState {
@@ -16,6 +19,7 @@ export interface SettingsState {
   preset: string;
   updateAudioSetting: <K extends keyof AudioSettings>(key: K, value: AudioSettings[K]) => void;
   updateEffect: (key: keyof EffectsState, value: boolean) => void;
+  setFrequencyRange: (range: FrequencyRange) => void;
   applyPreset: (preset: string) => void;
 }
 
@@ -25,13 +29,14 @@ const defaultEffects: EffectsState = {
   peak: true,
   pulse: false,
   centerLine: false,
+  frequencyRange: 'all',
 };
 
 const presets: Record<string, EffectsState> = {
-  default: { glow: true, reflection: true, peak: true, pulse: false, centerLine: false },
-  bassic: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true },
-  vivid: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true },
-  minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false },
+  default: { glow: true, reflection: true, peak: true, pulse: false, centerLine: false, frequencyRange: 'all' },
+  bassic: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all' },
+  vivid: { glow: true, reflection: true, peak: true, pulse: true, centerLine: true, frequencyRange: 'all' },
+  minimal: { glow: false, reflection: false, peak: false, pulse: false, centerLine: false, frequencyRange: 'all' },
 };
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
@@ -53,6 +58,10 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set((state) => ({
       effects: { ...state.effects, [key]: value },
       preset: 'custom',
+    })),
+  setFrequencyRange: (range) =>
+    set((state) => ({
+      effects: { ...state.effects, frequencyRange: range },
     })),
   applyPreset: (preset) => {
     if (preset === 'custom') {

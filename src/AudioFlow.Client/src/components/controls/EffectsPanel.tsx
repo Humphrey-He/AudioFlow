@@ -3,7 +3,6 @@ import { useSettingsStore } from '@/stores/settingsStore';
 import styles from './EffectsPanel.module.css';
 
 const effectKeys = ['glow', 'reflection', 'peak', 'pulse', 'centerLine'] as const;
-type EffectKey = (typeof effectKeys)[number];
 
 export function EffectsPanel() {
   const { t } = useTranslation();
