@@ -271,6 +271,18 @@
     "stop": "Stop",
     "info": "Use test signals to calibrate your audio system. Pink noise provides flat frequency response, while sine sweep helps identify frequency-specific issues."
   },
+  "spl": {
+    "title": "SPL Meter",
+    "current": "Current",
+    "peak": "Peak",
+    "average": "Average",
+    "min": "Min",
+    "max": "Max",
+    "start": "Start",
+    "stop": "Stop",
+    "reset": "Reset",
+    "info": "Sound Pressure Level meter with A-weighting. Normal conversation is 60-70 dB, loud music reaches 85+ dB. Prolonged exposure above 85 dB can cause hearing damage."
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",

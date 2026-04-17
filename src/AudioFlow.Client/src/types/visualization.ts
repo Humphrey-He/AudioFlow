@@ -1,4 +1,4 @@
-export type VisualizationMode = 'spectrum' | 'waterfall' | 'waveform' | 'polar' | '3d' | 'comparison' | 'mix' | 'calibration';
+export type VisualizationMode = 'spectrum' | 'waterfall' | 'waveform' | 'polar' | '3d' | 'comparison' | 'mix' | 'calibration' | 'spl';
 
 export interface VisualizationConfig {
   mode: VisualizationMode;

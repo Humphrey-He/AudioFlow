@@ -11,6 +11,7 @@ import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
 import { MixCanvas } from '@/components/canvas/MixCanvas';
 import { CalibrationCanvas } from '@/components/canvas/CalibrationCanvas';
+import { SplMeterCanvas } from '@/components/canvas/SplMeter';
 import { ThreeDSpectrum } from '@/components/canvas/ThreeDSpectrum';
 import { ParticleEffects } from '@/components/canvas/ParticleEffects';
 import { VisualizationSelector } from '@/components/canvas/VisualizationSelector';
@@ -51,6 +52,8 @@ export function App() {
         <MixCanvas />
       ) : visualizationMode === 'calibration' ? (
         <CalibrationCanvas />
+      ) : visualizationMode === 'spl' ? (
+        <SplMeterCanvas />
       ) : (
         <>
           <SpectrumCanvas />
