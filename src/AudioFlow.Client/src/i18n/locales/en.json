@@ -258,6 +258,19 @@
     "sideBySide": "Side by Side",
     "stacked": "Stacked"
   },
+  "calibration": {
+    "title": "Calibration",
+    "signalType": "Signal Type",
+    "pinkNoise": "Pink Noise",
+    "whiteNoise": "White Noise",
+    "sineSweep": "Sine Sweep",
+    "sineStatic": "Static Sine",
+    "frequency": "Frequency",
+    "amplitude": "Amplitude",
+    "start": "Start",
+    "stop": "Stop",
+    "info": "Use test signals to calibrate your audio system. Pink noise provides flat frequency response, while sine sweep helps identify frequency-specific issues."
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",

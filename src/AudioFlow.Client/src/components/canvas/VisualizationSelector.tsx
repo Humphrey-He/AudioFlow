@@ -17,6 +17,7 @@ export function VisualizationSelector() {
     { key: '3d', label: t('visualization.3d') },
     { key: 'comparison', label: t('visualization.comparison') },
     { key: 'mix', label: t('mix.title') },
+    { key: 'calibration', label: t('calibration.title') },
   ];
 
   return (

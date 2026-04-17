@@ -258,6 +258,19 @@
     "sideBySide": "并排",
     "stacked": "堆叠"
   },
+  "calibration": {
+    "title": "校准模式",
+    "signalType": "信号类型",
+    "pinkNoise": "粉红噪声",
+    "whiteNoise": "白噪声",
+    "sineSweep": "正弦扫频",
+    "sineStatic": "静态正弦",
+    "frequency": "频率",
+    "amplitude": "幅度",
+    "start": "开始",
+    "stop": "停止",
+    "info": "使用测试信号校准您的音频系统。粉红噪声提供平坦的频率响应，而正弦扫频有助于识别特定频率问题。"
+  },
   "gradient": {
     "title": "自定义渐变",
     "enable": "启用",

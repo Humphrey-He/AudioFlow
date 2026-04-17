@@ -258,6 +258,19 @@
     "sideBySide": "サイドバイサイド",
     "stacked": "スタック"
   },
+  "calibration": {
+    "title": "キャリブレーション",
+    "signalType": "信号タイプ",
+    "pinkNoise": "ピンクノイズ",
+    "whiteNoise": "ホワイトノイズ",
+    "sineSweep": "サインスイープ",
+    "sineStatic": "静的サイン波",
+    "frequency": "周波数",
+    "amplitude": "振幅",
+    "start": "開始",
+    "stop": "停止",
+    "info": "テスト信号を使用してオーディオシステムを較正します。ピンクノイズは平坦な周波数応答を提供し、シンスイープは周波数固有の問題を識別するのに役立ちます。"
+  },
   "gradient": {
     "title": "カスタムグラデーション",
     "enable": "有効",

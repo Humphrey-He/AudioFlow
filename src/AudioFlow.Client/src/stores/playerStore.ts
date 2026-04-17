@@ -57,6 +57,18 @@ export interface ParticleConfig {
   colorFollowBar: boolean;
 }
 
+export type SignalType = 'pink-noise' | 'white-noise' | 'sine-sweep' | 'sine-static';
+
+export interface CalibrationConfig {
+  signalType: SignalType;
+  frequency: number;
+  sweepStartFreq: number;
+  sweepEndFreq: number;
+  sweepDuration: number;
+  amplitude: number;
+  isActive: boolean;
+}
+
 interface PlayerState {
   // Playback state
   isPlaying: boolean;
@@ -77,6 +89,7 @@ interface PlayerState {
   customGradient: CustomGradient;
   particleConfig: ParticleConfig;
   mixConfig: MixConfig;
+  calibrationConfig: CalibrationConfig;
 
   // Actions
   setPlaying: (playing: boolean) => void;
@@ -93,6 +106,7 @@ interface PlayerState {
   updateCustomGradient: (config: Partial<CustomGradient>) => void;
   updateParticleConfig: (config: Partial<ParticleConfig>) => void;
   updateMixConfig: (config: Partial<MixConfig>) => void;
+  updateCalibrationConfig: (config: Partial<CalibrationConfig>) => void;
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
@@ -145,6 +159,15 @@ export const usePlayerStore = create<PlayerState>((set) => ({
     layout: 'overlay',
     blendMode: 'additive',
   },
+  calibrationConfig: {
+    signalType: 'pink-noise',
+    frequency: 1000,
+    sweepStartFreq: 20,
+    sweepEndFreq: 20000,
+    sweepDuration: 5,
+    amplitude: 0.5,
+    isActive: false,
+  },
 
   setPlaying: (isPlaying) => set({ isPlaying }),
   setCurrentTime: (currentTime) => set({ currentTime }),
@@ -180,5 +203,9 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   updateMixConfig: (config) =>
     set((state) => ({
       mixConfig: { ...state.mixConfig, ...config },
+    })),
+  updateCalibrationConfig: (config) =>
+    set((state) => ({
+      calibrationConfig: { ...state.calibrationConfig, ...config },
     })),
 }));
