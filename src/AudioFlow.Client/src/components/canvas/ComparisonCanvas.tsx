@@ -260,6 +260,26 @@ function ComparisonControls() {
   const comparisonConfig = usePlayerStore((s) => s.comparisonConfig);
   const updateComparisonConfig = usePlayerStore((s) => s.updateComparisonConfig);
 
+  const exportReport = () => {
+    const report = {
+      timestamp: new Date().toISOString(),
+      type: 'spectrum_comparison',
+      config: comparisonConfig,
+      analysis: {
+        splitView: comparisonConfig.splitView,
+        showDifference: comparisonConfig.showDifference,
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `audioflow-comparison-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={styles.controls}>
       <div className={styles.controlGroup}>
@@ -283,6 +303,12 @@ function ComparisonControls() {
           />
           <span>{t('comparison.showDiff')}</span>
         </label>
+      </div>
+
+      <div className={styles.controlGroup}>
+        <button className={styles.exportButton} onClick={exportReport}>
+          📥 {t('comparison.export')}
+        </button>
       </div>
     </div>
   );

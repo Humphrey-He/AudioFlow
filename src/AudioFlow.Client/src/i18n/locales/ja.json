@@ -153,7 +153,8 @@
     "splitView": "スプリットビュー",
     "horizontal": "水平",
     "vertical": "垂直",
-    "showDiff": "差分を表示"
+    "showDiff": "差分を表示",
+    "export": "レポートをエクスポート"
   },
   "colorScheme": {
     "fire": "ファイア",

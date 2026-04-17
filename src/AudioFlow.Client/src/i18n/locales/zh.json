@@ -153,7 +153,8 @@
     "splitView": "分屏视图",
     "horizontal": "水平",
     "vertical": "垂直",
-    "showDiff": "显示差异"
+    "showDiff": "显示差异",
+    "export": "导出报告"
   },
   "colorScheme": {
     "fire": "火焰",

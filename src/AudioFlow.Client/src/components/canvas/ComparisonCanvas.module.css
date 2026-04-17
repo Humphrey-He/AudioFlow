@@ -32,6 +32,8 @@
   background: var(--color-card);
   border-radius: 8px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .controlGroup {
@@ -71,6 +73,28 @@
   height: 16px;
 }
 
+.exportButton {
+  padding: 8px 16px;
+  background: var(--color-primary);
+  border: none;
+  border-radius: 4px;
+  color: var(--color-bg);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  touch-action: manipulation;
+  min-height: 36px;
+}
+
+.exportButton:hover {
+  opacity: 0.85;
+}
+
+.exportButton:active {
+  transform: scale(0.95);
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .container {
@@ -86,18 +110,71 @@
   .canvasWrapper {
     width: 100%;
   }
+
+  .controls {
+    gap: 12px;
+  }
 }
 
 /* Mobile portrait */
-@media (max-width: 480px) {
+@media (orientation: portrait) and (max-width: 768px) {
   .container {
     padding: 12px;
     margin-top: 10px;
     border-radius: 8px;
+    width: calc(100% - var(--safe-area-left, 0px) - var(--safe-area-right, 0px));
+    margin-left: calc(var(--safe-area-left, 0px) * -0.5);
+    margin-right: calc(var(--safe-area-right, 0px) * -0.5);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .canvases {
+    gap: 8px;
   }
 
   .controls {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .controlGroup {
+    flex-shrink: 0;
+  }
+
+  .select {
+    padding: 6px 10px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .checkbox {
+    font-size: 11px;
+  }
+
+  .exportButton {
+    padding: 8px 12px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+}
+
+/* Mobile portrait small screens */
+@media (orientation: portrait) and (max-width: 480px) {
+  .container {
+    padding: 8px;
+  }
+
+  .controls {
+    padding: 8px;
+    gap: 8px;
   }
 }
