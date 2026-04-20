@@ -283,6 +283,15 @@
     "reset": "重置",
     "info": "A计权声压级测量。正常对话为60-70分贝，大声音乐达到85+分贝。长时间暴露在85分贝以上可导致听力损伤。"
   },
+  "report": {
+    "title": "报告",
+    "notes": "备注",
+    "notesPlaceholder": "添加测量备注...",
+    "print": "打印/保存PDF",
+    "download": "下载HTML",
+    "generating": "生成中...",
+    "info": "使用当前测量数据生成可打印报告。打印时使用浏览器的另存为PDF选项。"
+  },
   "gradient": {
     "title": "自定义渐变",
     "enable": "启用",

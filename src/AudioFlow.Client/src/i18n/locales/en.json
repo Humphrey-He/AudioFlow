@@ -283,6 +283,15 @@
     "reset": "Reset",
     "info": "Sound Pressure Level meter with A-weighting. Normal conversation is 60-70 dB, loud music reaches 85+ dB. Prolonged exposure above 85 dB can cause hearing damage."
   },
+  "report": {
+    "title": "Report",
+    "notes": "Notes",
+    "notesPlaceholder": "Add notes about your measurement...",
+    "print": "Print / Save PDF",
+    "download": "Download HTML",
+    "generating": "Generating...",
+    "info": "Generate a printable report with your current measurement data. Use your browser's Save as PDF option when printing."
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",

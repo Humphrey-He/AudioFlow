@@ -1,0 +1,109 @@
+.container {
+  background: #12121a;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.header {
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.textarea {
+  padding: 10px;
+  background: #1a1a2a;
+  border: 1px solid #2a2a3a;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #38d9a9;
+}
+
+.textarea::placeholder {
+  color: #555;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.printButton,
+.downloadButton {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.printButton {
+  background: #2a2a3a;
+  color: #ccc;
+}
+
+.printButton:hover:not(:disabled) {
+  background: #3a3a4a;
+  color: #fff;
+}
+
+.downloadButton {
+  background: #38d9a9;
+  color: #0a0a0f;
+}
+
+.downloadButton:hover:not(:disabled) {
+  background: #4ae3b5;
+}
+
+.printButton:disabled,
+.downloadButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.info {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #1a1a2a;
+}
+
+.infoText {
+  font-size: 11px;
+  color: #666;
+  line-height: 1.5;
+}

@@ -7,6 +7,7 @@ import { BeatIndicator } from '@/components/status/BeatIndicator';
 import { PeakStats } from '@/components/status/PeakStats';
 import { InstrumentIndicator } from '@/components/status/InstrumentIndicator';
 import { SpectrumExporter } from '@/components/status/SpectrumExporter';
+import { ReportExporter } from '@/components/status/ReportExporter';
 import { SpectrumCanvas } from '@/components/canvas/SpectrumCanvas';
 import { ComparisonCanvas } from '@/components/canvas/ComparisonCanvas';
 import { MixCanvas } from '@/components/canvas/MixCanvas';
@@ -65,6 +66,7 @@ export function App() {
       <MobileMenu title={t('menu.analysis')}>
         <PeakStats />
         <SpectrumExporter />
+        <ReportExporter />
       </MobileMenu>
       <VisualizationSelector />
       <SourceSelector />
