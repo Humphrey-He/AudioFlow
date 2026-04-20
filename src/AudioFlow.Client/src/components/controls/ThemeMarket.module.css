@@ -1,0 +1,192 @@
+.container {
+  background: #12121a;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.header {
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.themeCard {
+  background: #1a1a2a;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.themeCard:hover {
+  background: #2a2a3a;
+}
+
+.themeCard.active {
+  border-color: #38d9a9;
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.previewBar {
+  height: 8px;
+  border-radius: 2px;
+}
+
+.themeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.themeName {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.themeAuthor {
+  font-size: 10px;
+  color: #666;
+}
+
+.builtIn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 8px;
+  background: #2a2a3a;
+  color: #888;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  background: #ff6b6b;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.themeCard:hover .deleteBtn {
+  opacity: 1;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #1a1a2a;
+}
+
+.exportBtn,
+.importBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exportBtn {
+  background: #2a2a3a;
+  color: #ccc;
+}
+
+.exportBtn:hover {
+  background: #3a3a4a;
+  color: #fff;
+}
+
+.importBtn {
+  background: #38d9a9;
+  color: #0a0a0f;
+}
+
+.importBtn:hover {
+  background: #4ae3b5;
+}
+
+.importSection {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #1a1a2a;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+  background: #1a1a2a;
+  border: 1px solid #2a2a3a;
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 12px;
+  font-family: monospace;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #38d9a9;
+}
+
+.textarea::placeholder {
+  color: #555;
+}
+
+.error {
+  display: block;
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.applyBtn {
+  width: 100%;
+  padding: 10px 16px;
+  background: #38d9a9;
+  border: none;
+  border-radius: 4px;
+  color: #0a0a0f;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.applyBtn:hover {
+  background: #4ae3b5;
+}

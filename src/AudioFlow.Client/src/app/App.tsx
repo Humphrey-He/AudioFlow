@@ -20,6 +20,7 @@ import { AudioPlayer } from '@/components/controls/AudioPlayer';
 import { SourceSelector } from '@/components/controls/SourceSelector';
 import { RecordingButton } from '@/components/controls/RecordingButton';
 import { PresetShare } from '@/components/controls/PresetShare';
+import { ThemeMarket } from '@/components/controls/ThemeMarket';
 import { ColorGradientEditor } from '@/components/controls/ColorGradientEditor';
 import { ParticleEditor } from '@/components/controls/ParticleEditor';
 import { ControlsPanel } from '@/components/controls/ControlsPanel';
@@ -80,6 +81,7 @@ export function App() {
       </MobileMenu>
       <AudioPlayer />
       <MobileMenu title={t('menu.settings')}>
+        <ThemeMarket />
         <EffectsPanel />
         <ColorGradientEditor />
         <ParticleEditor />

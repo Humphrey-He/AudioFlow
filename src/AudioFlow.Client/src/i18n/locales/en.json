@@ -292,6 +292,16 @@
     "generating": "Generating...",
     "info": "Generate a printable report with your current measurement data. Use your browser's Save as PDF option when printing."
   },
+  "themeMarket": {
+    "title": "Theme Market",
+    "builtIn": "Built-in",
+    "export": "Export Current",
+    "import": "Import Theme",
+    "apply": "Apply",
+    "pasteJson": "Paste theme JSON here...",
+    "invalidFormat": "Invalid theme format",
+    "custom": "Custom"
+  },
   "gradient": {
     "title": "Custom Gradient",
     "enable": "Enable",

@@ -292,6 +292,16 @@
     "generating": "生成中...",
     "info": "使用当前测量数据生成可打印报告。打印时使用浏览器的另存为PDF选项。"
   },
+  "themeMarket": {
+    "title": "主题市场",
+    "builtIn": "内置",
+    "export": "导出当前",
+    "import": "导入主题",
+    "apply": "应用",
+    "pasteJson": "在此粘贴主题JSON...",
+    "invalidFormat": "无效的主题格式",
+    "custom": "自定义"
+  },
   "gradient": {
     "title": "自定义渐变",
     "enable": "启用",

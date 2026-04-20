@@ -292,6 +292,16 @@
     "generating": "生成中...",
     "info": "現在の測定データから印刷可能なレポートを生成します。印刷時はブラウザのPDF保存オプションを使用してください。"
   },
+  "themeMarket": {
+    "title": "テーママーケット",
+    "builtIn": "内蔵",
+    "export": "現在をエクスポート",
+    "import": "テーマをインポート",
+    "apply": "適用",
+    "pasteJson": "テーマJSONをここに貼り付け...",
+    "invalidFormat": "無効なテーマ形式",
+    "custom": "カスタム"
+  },
   "gradient": {
     "title": "カスタムグラデーション",
     "enable": "有効",
